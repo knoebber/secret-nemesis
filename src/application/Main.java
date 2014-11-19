@@ -74,6 +74,19 @@ public class Main
           if (info != null)
             {
               //schools = Parser.parse(info);
+              try
+                {
+                  ArrayList<PairSchools> thePairs = Parser.parse(info);
+                  for (PairSchools pair : thePairs)
+                    {
+                      pair.print();
+                    }
+                }
+              catch (Exception e)
+                {
+                  // TODO Auto-generated catch block
+                  e.printStackTrace();
+                }
               //Scheduler.generate(schools)
             }
 

@@ -28,7 +28,7 @@ package application;
     /**
      * The driving distance between the two schools
      */
-    double distance;
+    int distance;
     
     // +--------------+------------------------------------------------------
     // | Constructors |
@@ -37,7 +37,7 @@ package application;
     /**
      * Creates a new pair of schools.
      */
-    PairSchools(School Home, School Away, double distance)
+    PairSchools(School Home, School Away, int distance)
     {
       this.Home = Home;
       this.Away = Away;
@@ -55,5 +55,14 @@ package application;
     {
       return Home.equals(other.Home) && Away.equals(other.Away);
     }// equals(PairSchools other)
+    
+    
+    public void print()
+    {
+      System.out.println("Home School is "+ Home.name);
+      System.out.println("Away School is "+ Away.name);
+      System.out.println("Distance is "+ distance);
+      System.out.println();
+    }
     
   }// class PairSchools

@@ -31,34 +31,45 @@ public class School
   /**
    * The dates which the school must play an opposing school
    */
-  ArrayList<Date> gameDates;
+  ArrayList<ScheduleDate> gameDates;
  
   /**
    * The dates which the school can play an opposing school
    */
-  ArrayList<Date> optionalGameDates;
+  ArrayList<ScheduleDate> optionalGameDates;
  
-  public School(String name,ArrayList<Date> gameDates,ArrayList<Date> optionalGameDates)
+  public School(String name,ArrayList<ScheduleDate> gameDates,ArrayList<ScheduleDate> optionalGameDates)
   {
-    name = this.name;
+    this.name = name;
     this.gameDates = gameDates;
     this.optionalGameDates=optionalGameDates;
   }// School(String name,Date[] gameDates)
- 
-  public void removeDate(Date dateToRemove)
+
+  
+  public void printInfo()
   {
-    //STUB
-  }// removeDate(Date dateToRemove)
+    System.out.println("School name is "+ this.name);
+    System.out.println("Optional Game Days:");
+    for (int i=0;i<optionalGameDates.size();i++)
+      {
+        optionalGameDates.get(i).printDate();
+      }
+    System.out.println("Mandatory Game Days:");
+    for (int i=0;i<gameDates.size();i++)
+      {
+        gameDates.get(i).printDate();
+      }
+  }
  
-  public void addDate(Date dateToAdd)
-  {
-    
-  }// addDate(Date dateToAdd)
  
- 
-  public ArrayList<Date> getDates()
+  public ArrayList<ScheduleDate> getDates()
   {
     return gameDates;
+  }// getDates()
+  
+  public boolean equals(String otherName)
+  {
+    return name.equals(otherName);
   }// getDates()
  
  
