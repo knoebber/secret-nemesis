@@ -10,7 +10,8 @@ import com.sun.media.sound.InvalidFormatException;
 /**
  * @author Harry Baker
  * @author William Royle
- * @author Nickolas Knoebber
+ * @author Nicolas Knoebber
+ * @author Amanda Hinchman
  *
  * @date November 18, 2014
  *
@@ -96,7 +97,7 @@ public class Parser
    * Saves the information found within the specified string as an ArrayList<PairSchools>
    * @pre
    *    line must be formatted as follows
-   *    Grinnell;[Cornell:10,IU:5]];[11/12,13/34];[5/2]
+   *    Grinnell;[Cornell:10,IU:5];[11/12,13/34];[5/2]
    *    Name ; Distances ; noPlayDates ; mustPlayDates
    * @param line - the string to generate SchoolPairs from
    *        theSchools - the ArrayList of Schools which exist

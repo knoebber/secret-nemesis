@@ -3,8 +3,9 @@ package csc207.HWNA.scheduler;
 /**
  * @author Harry Baker
  * @author William Royle
- * @author Nickolas Knoebber
- *
+ * @author Nicolas Knoebber
+ * @author Amanda Hinchman
+ * 
  * @date November 18, 2014
  *
  * Holds information regarding an unscheduled match between two schools.

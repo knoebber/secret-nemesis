@@ -6,6 +6,7 @@ import java.util.ArrayList;
  * @author Harry Baker
  * @author William Royle
  * @author Nicolas Knoebber
+ * @author Amanda Hinchman
  *
  * @date November 18, 2014
  *

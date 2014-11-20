@@ -17,7 +17,19 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-
+/**
+ * @author Harry Baker
+ * @author William Royle
+ * @author Nicolas Knoebber
+ * @author Amanda Hinchman
+ *
+ * @date November 18, 2014
+ * 
+ * Creates the GUI. 
+ * Allows the user to specify a file to use and when
+ * to generate the schedule. 
+ * 
+*/
 public class GUI
     extends Application
 {

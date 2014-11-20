@@ -4,6 +4,7 @@ package csc207.HWNA.scheduler;
  * @author Harry Baker
  * @author William Royle
  * @author Nicolas Knoebber
+ * @author Amanda Hinchman
  *
  * @date November 18, 2014
  *
