@@ -25,6 +25,27 @@ public class Parser
   // | Methods |
   // +---------+
 
+  
+  
+  public static int parseSchoolCount(File info) throws Exception
+  {
+    int schools = -1;
+    BufferedReader br = new BufferedReader(new FileReader(info));
+    String line;
+    while ((line = br.readLine()) != null && !line.trim().isEmpty())
+      {
+        schools++;
+      }
+
+    br.close();
+    return schools;
+  }
+  
+  
+  
+  
+  
+  
   /**
    * Saves the information found within the specified File as an ArrayList<PairSchools>
    * @pre
