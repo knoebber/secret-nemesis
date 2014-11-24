@@ -77,6 +77,26 @@ public class School
         optionalGameDates.get(i).printDate();
       }// for
   }// printInfo()
+  
+  public boolean canPlay(ScheduleDate thisDay)
+  {
+    for (int iter=0;iter<gameDates.size();iter++)
+      {
+        if (thisDay.equals(gameDates.get(iter)))
+          {
+            return true;
+          }
+      }
+    for (int iter=0;iter<optionalGameDates.size();iter++)
+      {
+        if (thisDay.equals(optionalGameDates.get(iter)))
+          {
+            return true;
+          }
+      }
+    return false;
+  }
+  
 
   /**
    * Gets the ScheduleDates from the school
