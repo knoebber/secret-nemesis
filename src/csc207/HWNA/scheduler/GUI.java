@@ -2,9 +2,7 @@ package csc207.HWNA.scheduler;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
-
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -119,12 +117,13 @@ public class GUI
                 {
                   ArrayList<PairSchools> thePairs = Parser.parse(info);
                   ArrayList<ScheduleDate> theDates = Parser.parseDates(info);
+                  int schools = Parser.parseSchoolCount(info);
                   Schedule dummy = new Schedule();
                   Schedule test =
-                      dummy.generateDummySchedule(thePairs, theDates);
+                      dummy.generateDummySchedule(thePairs, theDates,schools);
 
                   //put the output in the same directory as where the file was chosen
-                  Collections.sort(theDates);
+                  //Collections.sort(theDates);
                   //sort the dates so they are in order
 
                   ScheduleWriter.write(test, info.getParent() + "/schedule.txt");
