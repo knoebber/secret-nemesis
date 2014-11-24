@@ -89,6 +89,7 @@ public class GUI
     help.setLayoutY(450);
     help.setLayoutX(350);
     help.scaleXProperty().set(1.5);
+    
     help.scaleYProperty().set(1.5);
     pane.getChildren().add(help);
     help.getStyleClass().add("button");
@@ -157,21 +158,20 @@ public class GUI
                   ArrayList<PairSchools> thePairs = Parser.parse(info);
                   ArrayList<ScheduleDate> theDates = Parser.parseDates(info);
                   int schools = Parser.parseSchoolCount(info);
-                  Schedule dummy = new Schedule();
-                  Schedule test =
-                      dummy.generateDummySchedule(thePairs, theDates,schools);
-                  ScheduleDate testAddDate = test.allDates.get(3);
-                  System.out.println(testAddDate.month);
-                  PairSchools testAddPairSchools = test.gameList.get(0).competing;
-                  System.out.println("Home School = "+testAddPairSchools.home.name+" Away School="+testAddPairSchools.away.name);
-                  System.out.println(UtilsSchedule.canAdd(testAddPairSchools, testAddDate,test));
+                  Schedule dummy = new Schedule(thePairs,theDates,schools);
+                  dummy.generateDummySchedule();
+                  //ScheduleDate testAddDate = test.allDates.get(3);
+                  //System.out.println(testAddDate.month);
+                  //PairSchools testAddPairSchools = test.gameList.get(0).competing;
+                  //System.out.println("Home School = "+testAddPairSchools.home.name+" Away School="+testAddPairSchools.away.name);
+                  //System.out.println(UtilsSchedule.canAdd(testAddPairSchools, testAddDate,test));
                   
 
                   //put the output in the same directory as where the file was chosen
                   //Collections.sort(theDates);
                   //sort the dates so they are in order
 
-                  ScheduleWriter.write(test, info.getParent() + "/schedule.txt");
+                  ScheduleWriter.write(dummy, info.getParent() + "/schedule.txt");
                   finished.setText("Wrote schedule:"); //tell user that it was wrote
                   finalPath.setText(info.getParent() + "/schedule.txt");
                 }//try
