@@ -49,7 +49,9 @@ class PairSchools
   // +---------+-----------------------------------------------------------
   // | Methods |
   // +---------+
-
+  
+  
+  
   /**
    * Tells if two pairs of schools are identical.
    */

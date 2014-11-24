@@ -1,0 +1,20 @@
+.button {
+ -fx-background-color: linear-gradient(#666666, #919191);
+ -fx-border-color: #000000;
+ -fx-border-radius: 3;
+ -fx-text-fill: white;
+ -fx-font-family: "Tahoma";
+ -fx-font-weight: bold;
+}
+
+.button:hover {
+ -fx-background-color: linear-gradient(#323232, #474747);
+ -fx-text-color: #FFF; 
+}
+
+.root {
+ -fx-background-image: url("http://2.bp.blogspot.com/-JfnLpnI3JiA/UtJr867XmMI/AAAAAAAAGcg/nAUuGP2VUzQ/s1600/Black-texture-small-design-pattern-background-wallpapers-HD-for-tables.jpg");
+ -fx-background-size: auto;
+ -fx-background-repeat: no-repeat;
+}
+
