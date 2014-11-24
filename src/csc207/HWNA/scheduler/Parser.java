@@ -180,8 +180,11 @@ public class Parser
     // We remove the dates which are not optional play dates
     tempDates.removeAll(noPlayDates);
     tempDates.removeAll(mustPlayDates);
+    @SuppressWarnings("unchecked")
+    ArrayList<ScheduleDate> properOrderMustPlayDates = (ArrayList<ScheduleDate>) generalDates.clone();
+    properOrderMustPlayDates.retainAll(mustPlayDates);
     // Make new school
-    return new School(segments[0], mustPlayDates, tempDates);
+    return new School(segments[0], properOrderMustPlayDates, tempDates);
   }// processLine(String line,ArrayList<ScheduleDate> generalDates)
 
   /**
@@ -207,9 +210,9 @@ public class Parser
         dateString.substring(1, dateString.length() - 1).split(",");
     ArrayList<ScheduleDate> theDates = new ArrayList<ScheduleDate>();
     // We loop through each string, parsing and saving to dates
-    for (int Count = 0; Count < dateStrings.length; Count++)
+    for (int count = 0; count < dateStrings.length; count++)
       {
-        theDates.add(parseDate(dateStrings[Count]));
+        theDates.add(parseDate(dateStrings[count],count));
       }// for
     return theDates;
   }// parseDates(String dateString)
@@ -224,7 +227,7 @@ public class Parser
    *    Method will throw an expeption if the specified file is incorrectly formatted
    *    -InvalidFormatException
    */
-  private static ScheduleDate parseDate(String date)
+  private static ScheduleDate parseDate(String date, int count)
     throws Exception
   {
     ScheduleDate theDate = new ScheduleDate();
@@ -234,6 +237,7 @@ public class Parser
       {
         theDate.setMonth(Integer.parseInt(date.substring(0, positionSlash)));
         theDate.setDay(Integer.parseInt(date.substring(positionSlash + 1)));
+        theDate.setOrder(count);
       }// try
     catch (Exception E)
       {
