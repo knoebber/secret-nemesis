@@ -32,58 +32,30 @@ public class ScheduleWriter
   static void write(Schedule schedule, String fileName)
     throws Exception
   {
-    ScheduleDate lookingFor=schedule.gameList.get(0).dayOfCalendar;
-    ScheduleDate checking;
-    ScheduleDate current;
-
-    String currentLine = new String();
-    ArrayList<String> output = new ArrayList<String>();
-    // We loop through every single game within the schedule
-    for (int i = 0; i < schedule.gameList.size(); i++)
-      {
-        current = schedule.gameList.get(i).dayOfCalendar;
-        // If we just checked a date, dont check it again
-        if (current.compareTo(lookingFor) != 0 || i==0) 
-          {
-            lookingFor = schedule.gameList.get(i).dayOfCalendar;
-            currentLine = currentLine + lookingFor.toString() + ": ";
-            for (int j = 0; j < schedule.gameList.size(); j++)
-              {
-                if (j != i)
-                  {
-                    checking = schedule.gameList.get(j).dayOfCalendar;
-                    // We print the information for the specified game
-                    if (lookingFor.compareTo(checking) == 0) //if we find the date
-                      {
-                        // Build the string that will be the result
-                        currentLine = currentLine + "[";
-                        currentLine =
-                            currentLine
-                                + schedule.gameList.get(j).competing.home.name
-                                + " vs ";
-                        currentLine =
-                            currentLine
-                                + schedule.gameList.get(j).competing.away.name;
-                        currentLine = currentLine + "];";
-                      }// if
-                  }// if
-              }// for
-          }
-        if (currentLine.length() > 0)
-          {
-            //if we have a line, add it to the output
-            output.add(currentLine);
-            currentLine = ""; //reset the line
-          }//if
-      }//for
-    //http://stackoverflow.com/questions/2885173/java-how-to-create-and-write-to-a-file
-
     PrintWriter writer = new PrintWriter(fileName, "UTF-8"); 
-    //write to the file 
-    for (int i = 0; i < output.size(); i++)
-      writer.println(output.get(i));
+    ArrayList<ScheduleDate> theDates = schedule.allDates;
+    ArrayList<Schedule.Game> theGames = schedule.gameList;
+    for (int date = 0; date < theDates.size(); date++)
+      {
+        ScheduleDate theDate=theDates.get(date);
+        boolean found=false;
+        writer.print(theDate.month+"/"+theDate.day+":");
+        for (int game = 0; game < theGames.size(); game++)
+          {
+            Schedule.Game theGame=theGames.get(game);
+            if (theGame.dayOfCalendar.equals(theDate))
+              {
+                found=true;
+                writer.print("["+theGame.competing.home.name +" vs "+ theGame.competing.away.name+"]");
+              }
+          }
+        if (found)
+          {
+            writer.print(";");
+          }
+        writer.println();
+      }
 
     writer.close();
-
   }
 }
