@@ -29,6 +29,12 @@ public class ScheduleDate
    * The day of the game
    */
   int day;
+  
+  
+  /**
+   * The time ordering of the date
+   */
+  int order;
 
   // +--------------+------------------------------------------------------
   // | Constructors |
@@ -50,10 +56,11 @@ public class ScheduleDate
    *    day must be a valid date for the specified month
    *    (e.x.) in range 1 - 31 
    */
-  ScheduleDate(int month, int day)
+  ScheduleDate(int month, int day, int order)
   {
     this.month = month;
     this.day = day;
+    this.order = order;
   }// ScheduleDate(int month, int day)
 
   // +---------+-----------------------------------------------------------
@@ -94,13 +101,18 @@ public class ScheduleDate
   {
     this.day = day;
   }// setDay(int day)
+  
+  void setOrder(int order)
+  {
+    this.order = order;
+  }// setDay(int day)
 
   /**
    * Print the date
    */
   void printDate()
   {
-    System.out.println(month + "/" + day);
+    System.out.println(month + "/" + day+", order "+order);
   }// printDate()
   
   public String toString()
@@ -108,6 +120,23 @@ public class ScheduleDate
     return (month + "/" + day);
   }
 
+  
+  int get365()
+  {
+    int[] daysOfMonth = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+    int date365 = 0;
+    
+    for (int i = 0; i < (month - 1); i++)
+      {
+        date365 += daysOfMonth[i];
+      }
+    date365 += day;
+    return date365;
+  }
+  
+  
+  
+  
   
   /**
    * Compares two date objects. Makes a judgment by comparing the 
@@ -123,19 +152,11 @@ public class ScheduleDate
   public int compareTo(Object o)
   {
     ScheduleDate other = (ScheduleDate) o;
-    if (other.month == this.month)
-      {
-        if (other.day > this.day)
-          return -1;
-        if (other.day < this.day)
-          return 1;
-        if (other.day == this.day)
-          return 0;
-      }// if
-    if (other.month > this.month)
-      return -1;
-    if (other.month < this.month)
+    if (order>other.order)
       return 1;
+    if (order<other.order)
+      return -1;
+      
 
     return 0;
   }// compareTo(Object o)
