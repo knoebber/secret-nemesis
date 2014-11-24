@@ -1,6 +1,7 @@
 package csc207.HWNA.scheduler;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * @author Harry Baker
@@ -31,13 +32,23 @@ public class Schedule
   /**
    *  Holds the array of games which the schedule is composed of
    */
-  ArrayList<Game> gameList;
+  ArrayList<Game> gameList=new ArrayList<Game>();
 
   /**
    *  Holds all dates which games may potentially be held on
    */
   ArrayList<ScheduleDate> allDates;
+  
+  /**
+   * Holds all of the pairs of schools
+   */
+  
+  ArrayList<PairSchools> pairs;
 
+  /**
+   * The number of schools to be scheduled
+   */
+  int numSchools;
   // +--------------+------------------------------------------------------
   // | Constructors |
   // +--------------+
@@ -57,10 +68,11 @@ public class Schedule
    *    gameList.get(i).dayOfCalendar.equals(dates.get(j))==true
    *    
    */
-  Schedule(ArrayList<Game> gameList, ArrayList<ScheduleDate> dates)
+  Schedule(ArrayList<PairSchools> pairs,  ArrayList<ScheduleDate> dates, int numSchools)
   {
-    this.gameList = gameList;
+    this.pairs=pairs;
     this.allDates = dates;
+    this.numSchools=numSchools;
   }// Schedule(ArrayList<Game> schedule, ArrayList<ScheduleDate> dates)
 
   // +---------+-----------------------------------------------------------
@@ -68,12 +80,12 @@ public class Schedule
   // +---------+
 
   /**
-   * Create a new schedule composed of the given PairSchools array.
+   *  Build a schedule 
    */
-  Schedule generateSchedule(ArrayList<PairSchools> schedule)
+  public void generateSchedule()
   {
     // STUB
-    return null;
+    
   }// generateSchedule(ArrayList<PairSchools> schedule)
 
   /**
@@ -81,20 +93,101 @@ public class Schedule
    * output before the algorithm is implemented. Only for debugging purposes,
    * not a valid schedule
    */
-
-  Schedule generateDummySchedule(ArrayList<PairSchools> pairs,
-                                 ArrayList<ScheduleDate> dates)
+  public void generateDummySchedule()
   {
-    ArrayList<Game> games = new ArrayList<Game>();
+    
     int dateIndex = 0;
     for (int i = 0; i < pairs.size(); i++)
       {
-        games.add(new Game(pairs.get(i), dates.get(dateIndex++)));
-        dateIndex = dateIndex % dates.size();
+        gameList.add(new Game(pairs.get(i), allDates.get(dateIndex++)));
+        dateIndex = dateIndex % allDates.size();
         //System.out.println(i);
         //pairs.get(i).print();
       }
-    return new Schedule(games, dates);
+  }
+  /**
+   * find the 4 back to back dates
+   * @param dates
+   * @return
+   */
+  public ArrayList<ScheduleDate> findBackToBack(ArrayList<ScheduleDate> dates)
+  {
+    ArrayList<ScheduleDate> backToBacks = new ArrayList<ScheduleDate>();
+
+    for (int i = 0; i < (dates.size() - 1); i++)
+      {
+        ScheduleDate trackerDate1 = dates.get(i);
+        int date1 = trackerDate1.get365();
+        ScheduleDate trackerDate2 = dates.get(i + 1);
+        int date2 = trackerDate2.get365();
+        int dateDifference = date2 - date1;
+        // explain leap year, loop logic for dec 31 jan 1
+        if (dateDifference == 1 || dateDifference == -364 || dateDifference == 0)
+          {
+            backToBacks.add(trackerDate1);
+            backToBacks.add(trackerDate2);
+          }
+      }
+    return backToBacks;
+  }
+  
+  
+  public Schedule generateBackToBack(ScheduleDate saturday,
+                                     ScheduleDate sunday,
+                                     ArrayList<PairSchools> pairs)
+  {
+    //randomize the pairs so we get different results
+    Collections.shuffle(pairs);
+    ArrayList<Game> backToBacks = new ArrayList<Game>();
+    boolean isSaturday = true;
+    Game currentGame=new Game(pairs.get(0),saturday);
+    Game original=currentGame;
+    backToBacks.add(currentGame);
+    int j=0;
+    
+    for (int i = 0; i < numSchools-1; i++)
+      {        
+        while(true)
+          {
+            //look through all the games to find a pair that has the same away
+            if (isSaturday)
+              {
+                if (pairs.get(j).away.equals(currentGame.competing.away) && 
+                        !(pairs.get(j).home.equals(currentGame.competing.home)))
+                  {
+                    //add to the back to back game list
+                    currentGame=new Game(pairs.get(j), saturday);
+                    backToBacks.add(currentGame);
+                    isSaturday = false;
+                    break;
+                  }//if
+              }
+            else
+              {
+                if (pairs.get(j).home.equals(currentGame.competing.home) && 
+                    !(pairs.get(j).away.equals(currentGame.competing.away)) &&
+                    !(pairs.get(j).home.equals(original.competing.home)))
+                  {
+                    //add to the back to back game list
+                    currentGame=new Game(pairs.get(j), sunday);
+                    backToBacks.add(currentGame);
+                    isSaturday = true;
+                    break;
+                  }//if
+              }//else
+            j++;
+          }//while true
+        j=0;
+      }//for
+    for(int k=0; k < pairs.size(); k++)
+      {
+        if (pairs.get(k).home.equals(original.competing.home))
+          {
+            currentGame=new Game(pairs.get(k), sunday);
+            backToBacks.add(currentGame);
+          }
+      }
+    return null;
   }
 
   /**
@@ -110,50 +203,5 @@ public class Schedule
     return 0;
   }// generateRating()
 
-  public class Game
-  {
-
-    // +--------+------------------------------------------------------------
-    // | Fields |
-    // +--------+
-
-    /**
-     * The day of the match
-     */
-    ScheduleDate dayOfCalendar;
-
-    /**
-     * The competition which occurs on the specified date
-     */
-    PairSchools competing;
-
-    // +--------------+------------------------------------------------------
-    // | Constructors |
-    // +--------------+
-
-    /**
-     * We create a new game, given the pair of schools which are playing and
-     * the date of the competition
-     */
-    Game(PairSchools competing, ScheduleDate dayOfCalendar)
-    {
-      this.dayOfCalendar = dayOfCalendar;
-      this.competing = competing;
-    }// Game(PairSchools competing, Date dayOfCalendar)
-
-    // +---------+-----------------------------------------------------------
-    // | Methods |
-    // +---------+
-
-    /**
-     * Tells if two game objects are identical
-     */
-    public boolean equals(Game other)
-    {
-      return dayOfCalendar.equals(other.dayOfCalendar)
-             && competing.equals(other.competing);
-    }// equals(Game other)
-
-  }// class Game
-
-}
+ 
+}//class Schedule
