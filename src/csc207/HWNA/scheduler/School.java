@@ -114,7 +114,7 @@ public class School
     if (other instanceof School)
       {
         School otherSchool = (School) other;
-        return this==otherSchool;
+        return this.name.equals(otherSchool.name);
       }
     if (other instanceof String)
       {

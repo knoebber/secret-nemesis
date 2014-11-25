@@ -78,5 +78,18 @@ class PairSchools
     System.out.println("Distance is " + distance);
     System.out.println();
   }// print()
+  
+  
+  public boolean isPlaying(School theSchool)
+  {
+    return theSchool.equals(home) || theSchool.equals(away);
+  }
+  
+  public String toString()
+  {
+    return null; 
+  }
+  
+  
 
 }// class PairSchools

@@ -18,3 +18,7 @@
  -fx-background-repeat: no-repeat;
 }
 
+.rectangle {
+ -fx-background-color: linear-gradient(#2e57ed, #6e0d1c);
+}
+

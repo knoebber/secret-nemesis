@@ -44,5 +44,11 @@ public class Game
     return dayOfCalendar.equals(other.dayOfCalendar)
            && competing.equals(other.competing);
   }// equals(Game other)
+  
+  
+  public boolean isPlaying(School theSchool)
+  {
+    return theSchool.equals(competing.home) || theSchool.equals(competing.away);
+  }
 
 }// class Game

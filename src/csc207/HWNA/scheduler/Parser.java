@@ -63,7 +63,6 @@ public class Parser
           }// else
         lineNum++;
       }
-
     br.close();
     return theSchools;
   }
@@ -123,7 +122,7 @@ public class Parser
      */
     lineNum = 0;
     BufferedReader cr = new BufferedReader(new FileReader(info));
-    while ((line = cr.readLine()) != null)
+    while ((line = cr.readLine()) != null && !line.trim().isEmpty())
       {
         /*
          *  For all lines except the first, we have one school per line, so

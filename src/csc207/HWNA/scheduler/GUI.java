@@ -197,8 +197,8 @@ public class GUI
                   //sort the dates so they are in order
 
                   //ScheduleWriter.write(dummy, info.getParent() + "/schedule.txt");
-                 // finished.setText("Wrote schedule:"); //tell user that it was wrote
-                  //finalPath.setText(info.getParent() + "/schedule.txt");
+                  finished.setText("Wrote schedule:"); //tell user that it was wrote
+                  finalPath.setText(info.getParent() + "/schedule.txt");
                 }//try
               catch (Exception e)
                 {

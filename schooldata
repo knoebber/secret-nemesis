@@ -1,4 +1,8 @@
-[11/12,13/34,14/54,5/2]
-Grinnell;[Cornell:10,IU:5];[11/12,13/34];[5/2]
-Cornell;[Grinnell:10,IU:15];[];[5/2]
-IU;[Grinnell:5,Cornell:15];[5/2];[]
+[5/6,6/6,11/9,20/12,14/1,15/1,4/4,13/5]
+Grinnell;[Cornell:10,IU:5,Harvard:100,Mexico:500,Canada:500];[];[13/5,4/4]
+Cornell;[Grinnell:10,IU:15,Harvard:100,Mexico:500,Canada:500];[];[]
+IU;[Grinnell:5,Cornell:15,Harvard:100,Mexico:500,Canada:500];[];[]
+Harvard;[Grinnell:100,Cornell:100,IU:100,Mexico:500,Canada:500];[];[]
+Canada;[Grinnell:500,Cornell:500,Harvard:500,IU:500,Mexico:500];[];[]
+Mexico;[Grinnell:500,Cornell:500,IU:500,Harvard:500,Canada:500];[];[]
+     

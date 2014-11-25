@@ -1,0 +1,8 @@
+5/6:[Cornell vs Grinnell][Canada vs Harvard][IU vs Mexico];
+6/6:[Canada vs Grinnell][IU vs Harvard][Cornell vs Mexico];
+11/9:[Grinnell vs Harvard][Cornell vs IU][Canada vs Mexico];
+20/12:[Grinnell vs Mexico][Cornell vs Canada][IU vs Cornell][Harvard vs Grinnell][Mexico vs Grinnell][Mexico vs Canada];
+14/1:[Mexico vs Cornell][Grinnell vs Canada][Harvard vs IU];
+15/1:[Grinnell vs Cornell][Harvard vs Canada][Mexico vs IU];
+4/4:[Grinnell vs IU][IU vs Canada][Harvard vs Cornell];
+13/5:[IU vs Grinnell][Cornell vs Harvard][Harvard vs Mexico][Canada vs Cornell][Canada vs IU][Mexico vs Harvard];
