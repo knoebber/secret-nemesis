@@ -1,7 +1,6 @@
 package csc207.HWNA.scheduler;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 /**
  * @author Harry Baker
@@ -44,6 +43,8 @@ public class Schedule
    */
   
   ArrayList<PairSchools> pairs;
+  
+  ArrayList<School> schools;
 
   /**
    * The number of schools to be scheduled
@@ -68,11 +69,13 @@ public class Schedule
    *    gameList.get(i).dayOfCalendar.equals(dates.get(j))==true
    *    
    */
-  Schedule(ArrayList<PairSchools> pairs,  ArrayList<ScheduleDate> dates, int numSchools)
+  Schedule(ArrayList<PairSchools> pairs,  ArrayList<ScheduleDate> dates, int numSchools, ArrayList<School> schools)
   {
     this.pairs=pairs;
     this.allDates = dates;
     this.numSchools=numSchools;
+    this.schools=schools;
+    
   }// Schedule(ArrayList<Game> schedule, ArrayList<ScheduleDate> dates)
 
   // +---------+-----------------------------------------------------------
@@ -82,12 +85,61 @@ public class Schedule
   /**
    *  Build a schedule 
    */
-  public void generateSchedule()
+  public static Schedule generateSchedule(ArrayList<PairSchools> pairs,  ArrayList<ScheduleDate> dates, int numSchools, ArrayList<School> schools)
   {
-    // STUB
+
+    Schedule soFar=null;
+    ArrayList<ScheduleDate> backToBackDates = ScheduleDate.findBackToBack(dates);
+    backToBackDates.get(0).printDate();
+    System.out.println("Hi");
+    if (backToBackDates.size()!=4)
+      {
+        System.out.println("Error, we wanted 4 back-to-back dates");
+      }
+    
+    soFar = UtilsSchedule.fillBackToBackWeekends(backToBackDates.get(0), backToBackDates.get(1),
+                                   backToBackDates.get(2), backToBackDates.get(3),
+                           pairs,
+                           numSchools,schools);
+    @SuppressWarnings("unchecked")
+    ArrayList<ScheduleDate> ordinaryDates = (ArrayList<ScheduleDate>) dates.clone(); 
+    ordinaryDates.remove(backToBackDates.get(0));
+    ordinaryDates.remove(backToBackDates.get(1));
+    ordinaryDates.remove(backToBackDates.get(2));
+    ordinaryDates.remove(backToBackDates.get(3));
+    
+    Schedule temp = UtilsSchedule.fillDates(ordinaryDates, pairs, schools);
+    Schedule finalSchedule = UtilsSchedule.mergeSchedule(soFar,temp);
+    finalSchedule.allDates=dates;
+    
+    
+    try
+      {
+        ScheduleWriter.write(finalSchedule , "/home/roylewil16/csc207/secret-nemesis/schedule.txt");
+      }
+    catch (Exception e)
+      {
+        // TODO Auto-generated catch block
+        System.out.println("fg");
+        e.printStackTrace();
+      }
+    
+
+    return null;
     
   }// generateSchedule(ArrayList<PairSchools> schedule)
+  
 
+
+  
+  public void addGame(Game toAdd)
+  {
+    toAdd.competing.canAdd=false;
+    gameList.add(toAdd);
+  }
+  
+  
+  
   /**
    * create a a non optimized/correct schedule for the purpose of testing the
    * output before the algorithm is implemented. Only for debugging purposes,
@@ -97,7 +149,7 @@ public class Schedule
   {
     
     int dateIndex = 0;
-    for (int i = 0; i < pairs.size(); i++)
+    for (int i = 0; i < pairs.size()/2; i++)
       {
         gameList.add(new Game(pairs.get(i), allDates.get(dateIndex++)));
         dateIndex = dateIndex % allDates.size();
@@ -105,90 +157,9 @@ public class Schedule
         //pairs.get(i).print();
       }
   }
-  /**
-   * find the 4 back to back dates
-   * @param dates
-   * @return
-   */
-  public ArrayList<ScheduleDate> findBackToBack(ArrayList<ScheduleDate> dates)
-  {
-    ArrayList<ScheduleDate> backToBacks = new ArrayList<ScheduleDate>();
 
-    for (int i = 0; i < (dates.size() - 1); i++)
-      {
-        ScheduleDate trackerDate1 = dates.get(i);
-        int date1 = trackerDate1.get365();
-        ScheduleDate trackerDate2 = dates.get(i + 1);
-        int date2 = trackerDate2.get365();
-        int dateDifference = date2 - date1;
-        // explain leap year, loop logic for dec 31 jan 1
-        if (dateDifference == 1 || dateDifference == -364 || dateDifference == 0)
-          {
-            backToBacks.add(trackerDate1);
-            backToBacks.add(trackerDate2);
-          }
-      }
-    return backToBacks;
-  }
   
-  
-  public Schedule generateBackToBack(ScheduleDate saturday,
-                                     ScheduleDate sunday,
-                                     ArrayList<PairSchools> pairs)
-  {
-    //randomize the pairs so we get different results
-    Collections.shuffle(pairs);
-    ArrayList<Game> backToBacks = new ArrayList<Game>();
-    boolean isSaturday = true;
-    Game currentGame=new Game(pairs.get(0),saturday);
-    Game original=currentGame;
-    backToBacks.add(currentGame);
-    int j=0;
-    
-    for (int i = 0; i < numSchools-1; i++)
-      {        
-        while(true)
-          {
-            //look through all the games to find a pair that has the same away
-            if (isSaturday)
-              {
-                if (pairs.get(j).away.equals(currentGame.competing.away) && 
-                        !(pairs.get(j).home.equals(currentGame.competing.home)))
-                  {
-                    //add to the back to back game list
-                    currentGame=new Game(pairs.get(j), saturday);
-                    backToBacks.add(currentGame);
-                    isSaturday = false;
-                    break;
-                  }//if
-              }
-            else
-              {
-                if (pairs.get(j).home.equals(currentGame.competing.home) && 
-                    !(pairs.get(j).away.equals(currentGame.competing.away)) &&
-                    !(pairs.get(j).home.equals(original.competing.home)))
-                  {
-                    //add to the back to back game list
-                    currentGame=new Game(pairs.get(j), sunday);
-                    backToBacks.add(currentGame);
-                    isSaturday = true;
-                    break;
-                  }//if
-              }//else
-            j++;
-          }//while true
-        j=0;
-      }//for
-    for(int k=0; k < pairs.size(); k++)
-      {
-        if (pairs.get(k).home.equals(original.competing.home))
-          {
-            currentGame=new Game(pairs.get(k), sunday);
-            backToBacks.add(currentGame);
-          }
-      }
-    return null;
-  }
+ 
 
   /**
    * Generates a rating for the schedule. The higher the
