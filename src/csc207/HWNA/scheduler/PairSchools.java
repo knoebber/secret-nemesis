@@ -31,6 +31,8 @@ class PairSchools
    * The driving distance between the two schools
    */
   int distance;
+  
+  boolean canAdd=true;
 
   // +--------------+------------------------------------------------------
   // | Constructors |

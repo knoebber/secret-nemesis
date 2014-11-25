@@ -1,5 +1,7 @@
 package csc207.HWNA.scheduler;
 
+import java.util.ArrayList;
+
 /**
  * @author Harry Baker
  * @author William Royle
@@ -112,13 +114,42 @@ public class ScheduleDate
    */
   void printDate()
   {
-    System.out.println(month + "/" + day+", order "+order);
+    System.out.println(day + "/" + month+", order "+order);
   }// printDate()
   
   public String toString()
   {
-    return (month + "/" + day);
+    return (day + "/" + month);
   }
+  
+  
+  /**
+   * find the 4 back to back dates
+   * @param dates
+   * @return
+   */
+  public static ArrayList<ScheduleDate> findBackToBack(ArrayList<ScheduleDate> dates)
+  {
+    ArrayList<ScheduleDate> backToBacks = new ArrayList<ScheduleDate>();
+
+    for (int i = 0; i < (dates.size() - 1); i++)
+      {
+        ScheduleDate trackerDate1 = dates.get(i);
+        int date1 = trackerDate1.get365();
+        ScheduleDate trackerDate2 = dates.get(i + 1);
+        int date2 = trackerDate2.get365();
+        int dateDifference = date2 - date1;
+        // explain leap year, loop logic for dec 31 jan 1
+        if (dateDifference == 1 || dateDifference == -364 || dateDifference == 0)
+          {
+            backToBacks.add(trackerDate1);
+            backToBacks.add(trackerDate2);
+          }
+      }
+    return backToBacks;
+  }
+  
+  
 
   
   int get365()

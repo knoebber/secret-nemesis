@@ -109,9 +109,18 @@ public class School
   /**
    * Returns true if the string is the same as the school's name
    */
-  public boolean equals(String otherName)
+  public boolean equals(Object other)
   {
-    return name.equals(otherName);
+    if (other instanceof School)
+      {
+        School otherSchool = (School) other;
+        return this==otherSchool;
+      }
+    if (other instanceof String)
+      {
+        return name.equals(other);
+      }
+    return false;
   }// getDates()
 
 }//class School

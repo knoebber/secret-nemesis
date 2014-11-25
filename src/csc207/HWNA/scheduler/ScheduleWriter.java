@@ -34,15 +34,15 @@ public class ScheduleWriter
   {
     PrintWriter writer = new PrintWriter(fileName, "UTF-8"); 
     ArrayList<ScheduleDate> theDates = schedule.allDates;
-    ArrayList<Schedule.Game> theGames = schedule.gameList;
+    ArrayList<Game> theGames = schedule.gameList;
     for (int date = 0; date < theDates.size(); date++)
       {
         ScheduleDate theDate=theDates.get(date);
         boolean found=false;
-        writer.print(theDate.month+"/"+theDate.day+":");
+        writer.print(theDate.day+"/"+theDate.month+":");
         for (int game = 0; game < theGames.size(); game++)
           {
-            Schedule.Game theGame=theGames.get(game);
+            Game theGame=theGames.get(game);
             if (theGame.dayOfCalendar.equals(theDate))
               {
                 found=true;

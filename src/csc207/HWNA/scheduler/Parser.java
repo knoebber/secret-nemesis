@@ -42,6 +42,31 @@ public class Parser
   }
   
   
+  public static ArrayList<School> parseSchools (File info) throws Exception
+  {
+
+    BufferedReader br = new BufferedReader(new FileReader(info));
+    String line;
+    ArrayList<School> theSchools = new ArrayList<School>();
+    ArrayList<ScheduleDate> generalDates = new ArrayList<ScheduleDate>();
+    int lineNum=0;
+    while ((line = br.readLine()) != null && !line.trim().isEmpty())
+      {
+        if (lineNum == 0)
+          {
+            generalDates = parseDates(line);
+          }// if
+        // Each subsequent line has information for a school
+        else
+          {
+            theSchools.add(processLine(line, generalDates));
+          }// else
+        lineNum++;
+      }
+
+    br.close();
+    return theSchools;
+  }
   
   
   
@@ -256,8 +281,8 @@ public class Parser
     // We make new ScheduleDate object, throwing appropriate exceptions
     try
       {
-        theDate.setMonth(Integer.parseInt(date.substring(0, positionSlash)));
-        theDate.setDay(Integer.parseInt(date.substring(positionSlash + 1)));
+        theDate.setDay(Integer.parseInt(date.substring(0, positionSlash)));
+        theDate.setMonth(Integer.parseInt(date.substring(positionSlash + 1)));
         theDate.setOrder(count);
       }// try
     catch (Exception E)
