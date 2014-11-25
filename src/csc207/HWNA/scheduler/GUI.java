@@ -13,6 +13,10 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Stop;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -56,11 +60,20 @@ public class GUI
     pane.getStyleClass().add("root");
     //note: used this example to use customization:
     //https://introjava.wordpress.com/2012/03/23/java-fx-2-linear-gradients/
+    //LinearGradient thanks to http://java-buddy.blogspot.com/2014/05/javafx-example-rectangle-filled-with.html
+    Stop[] stops = new Stop[] {
+                new Stop(0, Color.BLACK),
+                new Stop(1, Color.DARKRED)
+    };
+    LinearGradient linearGradient = new LinearGradient(0, 1, 0, 0, true, CycleMethod.NO_CYCLE, stops);
+    
+    //LinearGradient rectangle
     Rectangle rectangle = new Rectangle(420,250);
     rectangle.setLayoutY(20);
     rectangle.setLayoutX(40);
+    rectangle.setFill(linearGradient);
     pane.getChildren().add(rectangle);
-    pane.getStyleClass().add("rectangle");
+    
     
     //make the open button
     Button openResource = new Button("Open School Infomation File");
@@ -89,7 +102,6 @@ public class GUI
     help.setLayoutY(450);
     help.setLayoutX(350);
     help.scaleXProperty().set(1.5);
-    
     help.scaleYProperty().set(1.5);
     pane.getChildren().add(help);
     help.getStyleClass().add("button");
@@ -106,30 +118,35 @@ public class GUI
     
     //make a text
     Text currentFile = new Text("Current File:");
-    currentFile.setX(25);
+    currentFile.setX(50);
     currentFile.setY(120);
     currentFile.setFont(Font.font(null, FontWeight.EXTRA_LIGHT, 12));
+    currentFile.setFill(Color.WHITE);
     pane.getChildren().add(currentFile);
 
     //shows where we opened the file
     Text openedFile = new Text();
-    openedFile.setX(25);
+    openedFile.setX(50);
     openedFile.setY(150);
     openedFile.setFont(Font.font(null, FontWeight.EXTRA_LIGHT, 12));
+    openedFile.setFill(Color.WHITE);
     pane.getChildren().add(openedFile);
 
     //tells us when it generated the schedule
     Text finished = new Text();
-    finished.setX(25);
+    finished.setX(50);
     finished.setY(385);
     finished.setFont(Font.font(null, FontWeight.EXTRA_LIGHT, 12));
     pane.getChildren().add(finished);
+    finished.setFill(Color.WHITE);
     //shows where the output is
     Text finalPath = new Text();
-    finalPath.setX(25);
+    finalPath.setX(50);
     finalPath.setY(415);
     finalPath.setFont(Font.font(null, FontWeight.EXTRA_LIGHT, 12));
     pane.getChildren().add(finalPath);
+    finalPath.getStyleClass().add("text");
+    finalPath.setFill(Color.WHITE);
     
     openResource.setOnAction(new EventHandler<ActionEvent>()
       {
@@ -157,9 +174,17 @@ public class GUI
                 {
                   ArrayList<PairSchools> thePairs = Parser.parse(info);
                   ArrayList<ScheduleDate> theDates = Parser.parseDates(info);
+                  ArrayList<School> theSchools = Parser.parseSchools(info);
                   int schools = Parser.parseSchoolCount(info);
-                  Schedule dummy = new Schedule(thePairs,theDates,schools);
-                  dummy.generateDummySchedule();
+                  Schedule.generateSchedule(thePairs, theDates, schools,theSchools);
+                  //dummy.generateDummySchedule();
+                  //Schedule important = UtilsSchedule.fillBackToBackDates(theDates.get(0),theDates.get(1), thePairs,schools);
+                  //Schedule important2 = UtilsSchedule.fillBackToBackDates(theDates.get(6),theDates.get(7), thePairs,schools);
+                  //Schedule toWrite = UtilsSchedule.mergeSchedule(important, important2);
+      //            Schedule realImportant = UtilsSchedule.fillBackToBackWeekends(theDates.get(0),theDates.get(1),
+      //                                                            theDates.get(6),theDates.get(7),
+      //                                                            thePairs, schools);
+      //            ScheduleWriter.write(realImportant, info.getParent() + "/importantschedule.txt");
                   //ScheduleDate testAddDate = test.allDates.get(3);
                   //System.out.println(testAddDate.month);
                   //PairSchools testAddPairSchools = test.gameList.get(0).competing;
@@ -171,9 +196,9 @@ public class GUI
                   //Collections.sort(theDates);
                   //sort the dates so they are in order
 
-                  ScheduleWriter.write(dummy, info.getParent() + "/schedule.txt");
-                  finished.setText("Wrote schedule:"); //tell user that it was wrote
-                  finalPath.setText(info.getParent() + "/schedule.txt");
+                  //ScheduleWriter.write(dummy, info.getParent() + "/schedule.txt");
+                 // finished.setText("Wrote schedule:"); //tell user that it was wrote
+                  //finalPath.setText(info.getParent() + "/schedule.txt");
                 }//try
               catch (Exception e)
                 {
