@@ -17,6 +17,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -107,14 +108,32 @@ public class GUI
     help.getStyleClass().add("button");
     
     //create a pop up from the help button
-    final Popup popup = new Popup();
-    popup.setX(300);
-    popup.setY(200);
-    popup.setHideOnEscape(true);
-    Label label = new Label("Need help?");
+    Pane helpPane = new Pane(); //the pane for the help window
+    helpPane.setPadding(new Insets(25, 25, 25, 25));
+    Stage helpWindow = new Stage();
+    helpWindow.setResizable(false);
+    helpWindow.setTitle("Information");
+    Scene helpScene = new Scene(helpPane, 450, 450);
+    helpWindow.setScene(helpScene);
+    helpPane.getStyleClass().add("popup");
+    //helpPane.getStylesheets().add(getClass().getResource("popup.css").toExternalForm()); 
+    //TODO: write css for popup
+    Stop[] stops2 = new Stop[] {
+                               new Stop(0, Color.WHITE),
+                               new Stop(1, Color.LIGHTGRAY)
+                   };
+    LinearGradient helpGradient = new LinearGradient(0, 1, 0, 0, true, CycleMethod.NO_CYCLE, stops2);
+    
+    //LinearGradient rectangle
+    Rectangle rectangle2 = new Rectangle(450,450);
+    rectangle2.setFill(helpGradient);
+    helpPane.getChildren().add(rectangle2);
+    
+    
+    
     //label.getStylesheets().add(getClass().getResource("popup.css").toExternalForm());
     //^causes errors
-    label.getStyleClass().add("popup");
+    //label.getStyleClass().add("popup");
     
     //make a text
     Text currentFile = new Text("Current File:");
@@ -214,7 +233,7 @@ public class GUI
     {
         @Override
         public void handle(ActionEvent event) {
-                popup.show(primaryStage);
+          helpWindow.show();
         }
     });
 
