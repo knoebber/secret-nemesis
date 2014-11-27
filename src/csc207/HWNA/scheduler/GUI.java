@@ -12,6 +12,8 @@ import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
@@ -113,22 +115,14 @@ public class GUI
     Stage helpWindow = new Stage();
     helpWindow.setResizable(false);
     helpWindow.setTitle("Information");
-    Scene helpScene = new Scene(helpPane, 450, 450);
+    Scene helpScene = new Scene(helpPane, 565, 280);
     helpWindow.setScene(helpScene);
     helpPane.getStyleClass().add("popup");
+    Image img = new Image("exampleschedule.png");
+    ImageView imgView = new ImageView(img);
+    //imgView.
     //helpPane.getStylesheets().add(getClass().getResource("popup.css").toExternalForm()); 
-    //TODO: write css for popup
-    Stop[] stops2 = new Stop[] {
-                               new Stop(0, Color.WHITE),
-                               new Stop(1, Color.LIGHTGRAY)
-                   };
-    LinearGradient helpGradient = new LinearGradient(0, 1, 0, 0, true, CycleMethod.NO_CYCLE, stops2);
-    
-    //LinearGradient rectangle
-    Rectangle rectangle2 = new Rectangle(450,450);
-    rectangle2.setFill(helpGradient);
-    helpPane.getChildren().add(rectangle2);
-    
+    //TODO: write css for pop up
     
     
     //label.getStylesheets().add(getClass().getResource("popup.css").toExternalForm());
@@ -234,6 +228,7 @@ public class GUI
         @Override
         public void handle(ActionEvent event) {
           helpWindow.show();
+          helpPane.getChildren().add(imgView);
         }
     });
 
