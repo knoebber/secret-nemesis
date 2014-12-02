@@ -1,8 +1,19 @@
-5/6:[Cornell vs Grinnell][Canada vs Harvard][IU vs Mexico];
-6/6:[Canada vs Grinnell][IU vs Harvard][Cornell vs Mexico];
-11/9:[Grinnell vs Harvard][Cornell vs IU][Canada vs Mexico];
-20/12:[Grinnell vs Mexico][Cornell vs Canada][IU vs Cornell][Harvard vs Grinnell][Mexico vs Grinnell][Mexico vs Canada];
-14/1:[Mexico vs Cornell][Grinnell vs Canada][Harvard vs IU];
-15/1:[Grinnell vs Cornell][Harvard vs Canada][Mexico vs IU];
-4/4:[Grinnell vs IU][IU vs Canada][Harvard vs Cornell];
-13/5:[IU vs Grinnell][Cornell vs Harvard][Harvard vs Mexico][Canada vs Cornell][Canada vs IU][Mexico vs Harvard];
+22/11:[GC vs MC][SNC vs CC][RC vs LFC][RC vs BC][BC vs RC][LFC vs MC]
+2/12:[MC vs KC][CC vs RC][LU vs GC][IC vs LFC][SNC vs BC]
+3/12:[CC vs KC][LU vs RC][IC vs GC][SNC vs LFC][MC vs BC]
+7/12:[KC vs MC][LU vs IC][GC vs RC][LFC vs SNC]
+10/12:[GC vs LU][SNC vs KC][LFC vs GC][IC vs RC][CC vs LU]
+4/1:[SNC vs LU][CC vs GC][LU vs LFC][KC vs BC]
+7/1:[MC vs GC][RC vs IC][CC vs LFC][BC vs LU][KC vs SNC][KC vs CC]
+13/1:[BC vs SNC][GC vs IC][KC vs LU][LFC vs CC][RC vs MC]
+14/1:[GC vs SNC][KC vs IC][LFC vs LU][RC vs CC][BC vs MC]
+18/1:[CC vs IC][LFC vs IC][IC vs MC][KC vs GC][MC vs SNC][GC vs KC][RC vs LU]
+21/1:[KC vs LFC][BC vs KC][SNC vs GC][MC vs LU][RC vs SNC]
+24/1:[LU vs CC][GC vs BC][IC vs SNC]
+28/1:[IC vs CC][SNC vs MC][BC vs GC]
+31/1:[CC vs BC][SNC vs IC][MC vs LFC][IC vs BC][IC vs LU][RC vs GC][RC vs KC]
+4/2:[GC vs CC][LU vs BC][LFC vs RC][CC vs MC][MC vs IC]
+8/2:[CC vs SNC][LU vs MC][GC vs LFC][LU vs KC]
+11/2:[SNC vs RC][IC vs KC][LU vs SNC][BC vs CC][BC vs LFC]
+14/2:[MC vs CC][LFC vs KC][BC vs IC]
+18/2:[LFC vs BC][KC vs RC][MC vs RC]

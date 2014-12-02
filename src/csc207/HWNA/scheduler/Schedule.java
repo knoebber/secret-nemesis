@@ -21,158 +21,119 @@ import java.util.ArrayList;
  *      In addition, the closer together competing schools for midweek games, the more
  *      optimal the schedule
  */
+
+import java.util.ArrayList;
+
+//Assume all fields except theDates are immutable
 public class Schedule
 {
+  ArrayList<Day> theDates = new ArrayList<Day>();
 
-  // +--------+------------------------------------------------------------
-  // | Fields |
-  // +--------+
-
-  /**
-   *  Holds the array of games which the schedule is composed of
-   */
-  ArrayList<Game> gameList=new ArrayList<Game>();
+  final ArrayList<ScheduleDate> allDates;
 
   /**
-   *  Holds all dates which games may potentially be held on
-   */
-  ArrayList<ScheduleDate> allDates;
-  
-  /**
-   * Holds all of the pairs of schools
-   */
-  
+  * Holds all of the pairs of schools
+  */
+
   ArrayList<PairSchools> pairs;
-  
-  ArrayList<School> schools;
 
-  /**
-   * The number of schools to be scheduled
-   */
-  int numSchools;
-  // +--------------+------------------------------------------------------
-  // | Constructors |
-  // +--------------+
+  final ArrayList<School> schools;
 
-  /**
-   * Create an empty schedule object.
-   */
-  Schedule()
+  Schedule(ArrayList<PairSchools> pairs, ArrayList<ScheduleDate> dates,
+           ArrayList<School> schools)
   {
-  }// Schedule()
-
-  /**
-   * Create a new schedule composed of the given game, with the 
-   * dates passed being potential game dates.
-   * @pre
-   *    some j exists such that for all i,
-   *    gameList.get(i).dayOfCalendar.equals(dates.get(j))==true
-   *    
-   */
-  Schedule(ArrayList<PairSchools> pairs,  ArrayList<ScheduleDate> dates, int numSchools, ArrayList<School> schools)
-  {
-    this.pairs=pairs;
+    this.pairs = pairs;
     this.allDates = dates;
-    this.numSchools=numSchools;
-    this.schools=schools;
-    
-  }// Schedule(ArrayList<Game> schedule, ArrayList<ScheduleDate> dates)
-
-  // +---------+-----------------------------------------------------------
-  // | Methods |
-  // +---------+
-
-  /**
-   *  Build a schedule 
-   */
-  public static Schedule generateSchedule(ArrayList<PairSchools> pairs,  ArrayList<ScheduleDate> dates, int numSchools, ArrayList<School> schools)
-  {
-
-    Schedule soFar=null;
-    ArrayList<ScheduleDate> backToBackDates = ScheduleDate.findBackToBack(dates);
-    backToBackDates.get(0).printDate();
-    System.out.println("Hi");
-    if (backToBackDates.size()!=4)
-      {
-        System.out.println("Error, we wanted 4 back-to-back dates");
-      }
-    
-    soFar = UtilsSchedule.fillBackToBackWeekends(backToBackDates.get(0), backToBackDates.get(1),
-                                   backToBackDates.get(2), backToBackDates.get(3),
-                           pairs,
-                           numSchools,schools);
-    @SuppressWarnings("unchecked")
-    ArrayList<ScheduleDate> ordinaryDates = (ArrayList<ScheduleDate>) dates.clone(); 
-    ordinaryDates.remove(backToBackDates.get(0));
-    ordinaryDates.remove(backToBackDates.get(1));
-    ordinaryDates.remove(backToBackDates.get(2));
-    ordinaryDates.remove(backToBackDates.get(3));
-    
-    Schedule temp = UtilsSchedule.fillDates(ordinaryDates, pairs, schools);
-    Schedule finalSchedule = UtilsSchedule.mergeSchedule(soFar,temp);
-    finalSchedule.allDates=dates;
-    
-    
-    try
-      {
-        ScheduleWriter.write(finalSchedule , "/home/roylewil16/csc207/secret-nemesis/schedule.txt");
-      }
-    catch (Exception e)
-      {
-        // TODO Auto-generated catch block
-        System.out.println("fg");
-        e.printStackTrace();
-      }
-    
-
-    return null;
-    
-  }// generateSchedule(ArrayList<PairSchools> schedule)
-  
-
-
-  
-  public void addGame(Game toAdd)
-  {
-    toAdd.competing.canAdd=false;
-    gameList.add(toAdd);
+    this.schools = schools;
+    reset();
   }
-  
-  
-  
-  /**
-   * create a a non optimized/correct schedule for the purpose of testing the
-   * output before the algorithm is implemented. Only for debugging purposes,
-   * not a valid schedule
-   */
-  public void generateDummySchedule()
+
+  Schedule(ArrayList<Day> theDates, ArrayList<PairSchools> pairs,
+           ArrayList<ScheduleDate> dates, ArrayList<School> schools)
   {
-    
-    int dateIndex = 0;
-    for (int i = 0; i < pairs.size()/2; i++)
+    this.theDates = theDates;
+    this.pairs = pairs;
+    this.allDates = dates;
+    this.schools = schools;
+  }
+
+  public void makeDummy()
+  {
+    ArrayList<PairSchools> firstGames = new ArrayList<PairSchools>();
+    ArrayList<PairSchools> secondGames = new ArrayList<PairSchools>();
+    firstGames.add(pairs.get(0));
+    secondGames.add(pairs.get(1));
+    secondGames.add(pairs.get(2));
+    theDates.add(new Day(firstGames, allDates.get(0)));
+    theDates.add(new Day(secondGames, allDates.get(1)));
+  }
+
+  public String toString()
+  {
+
+    String toReturn = "";
+    for (Day theDate : theDates)
       {
-        gameList.add(new Game(pairs.get(i), allDates.get(dateIndex++)));
-        dateIndex = dateIndex % allDates.size();
-        //System.out.println(i);
-        //pairs.get(i).print();
+        if (theDate.matchesPlaying())
+          {
+
+            toReturn += theDate.toString() + '\n';
+          }
+      }
+    return toReturn;
+  }
+
+  public void reset()
+  {
+    for (ScheduleDate toPlay : allDates)
+      {
+        theDates.add(new Day(toPlay));
       }
   }
 
-  
- 
-
-  /**
-   * Generates a rating for the schedule. The higher the
-   * rating, the better the schedule
-   *
-   * @post
-   *    if generateRating() returns 0, the schedule is invalid
-   */
-  public double generateRating()
+  public boolean canAdd(PairSchools toAdd, ScheduleDate theDate)
   {
-    // STUB
-    return 0;
-  }// generateRating()
 
- 
-}//class Schedule
+    for (Day mayBeDay : theDates)
+      {
+        if (mayBeDay.isDate(theDate))
+          {
+            return mayBeDay.canAdd(toAdd);
+          }
+      }
+    return false;
+  }
+
+  public void addGame(PairSchools toAdd, ScheduleDate theDate)
+  {
+    for (Day mayBeDay : theDates)
+      {
+        if (mayBeDay.isDate(theDate))
+          {
+            mayBeDay.addGame(toAdd);
+            break;
+          }
+      }
+  }
+
+  public int numSchools()
+  {
+    return schools.size();
+  }
+
+  public Schedule clone()
+  {
+    ArrayList<Day> theNewDates = new ArrayList<Day>();
+    for (Day toCopy : theDates)
+      {
+        theNewDates.add(toCopy.clone());
+      }
+    ArrayList<PairSchools> theNewPairSchools = new ArrayList<PairSchools>();
+    for (PairSchools toCopy : pairs)
+      {
+        theNewPairSchools.add(toCopy.clone());
+      }
+    return new Schedule(theNewDates, theNewPairSchools, allDates, schools);
+  }
+
+}

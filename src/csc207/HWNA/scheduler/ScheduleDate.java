@@ -14,8 +14,24 @@ import java.util.ArrayList;
  * We only need the month and day of the month
  * 
  */
+
+
+import java.util.ArrayList;
+
+/**
+ * @author Harry Baker
+ * @author William Royle
+ * @author Nicolas Knoebber
+ * @author Amanda Hinchman
+ *
+ * @date November 18, 2014
+ *
+ * Holds the calendar information which is relevant to a game date.
+ * We only need the month and day of the month. ScheduleDate objects
+ * are immutable
+ */
 @SuppressWarnings("rawtypes")
-public class ScheduleDate
+final public class ScheduleDate
     implements Comparable
 {
   // +--------+------------------------------------------------------------
@@ -124,7 +140,7 @@ public class ScheduleDate
   
   
   /**
-   * find the 4 back to back dates
+   * find the back to back dates
    * @param dates
    * @return
    */
@@ -193,3 +209,4 @@ public class ScheduleDate
   }// compareTo(Object o)
 
 }
+

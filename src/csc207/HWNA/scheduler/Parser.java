@@ -5,71 +5,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
 
-import com.sun.media.sound.InvalidFormatException;
-
-/**
- * @author Harry Baker
- * @author William Royle
- * @author Nicolas Knoebber
- * @author Amanda Hinchman
- *
- * @date November 18, 2014
- *
- * Methods used to parse the information read from the text file entered by the user
- * and save it into the data structures needed to generate a schedule
- */
 public class Parser
 {
 
-  // +---------+-----------------------------------------------------------
-  // | Methods |
-  // +---------+
-
-  
-  
-  public static int parseSchoolCount(File info) throws Exception
-  {
-    int schools = -1;
-    BufferedReader br = new BufferedReader(new FileReader(info));
-    String line;
-    while ((line = br.readLine()) != null && !line.trim().isEmpty())
-      {
-        schools++;
-      }
-
-    br.close();
-    return schools;
-  }
-  
-  
-  public static ArrayList<School> parseSchools (File info) throws Exception
-  {
-
-    BufferedReader br = new BufferedReader(new FileReader(info));
-    String line;
-    ArrayList<School> theSchools = new ArrayList<School>();
-    ArrayList<ScheduleDate> generalDates = new ArrayList<ScheduleDate>();
-    int lineNum=0;
-    while ((line = br.readLine()) != null && !line.trim().isEmpty())
-      {
-        if (lineNum == 0)
-          {
-            generalDates = parseDates(line);
-          }// if
-        // Each subsequent line has information for a school
-        else
-          {
-            theSchools.add(processLine(line, generalDates));
-          }// else
-        lineNum++;
-      }
-    br.close();
-    return theSchools;
-  }
-  
-  
-  
-  
   /**
    * Saves the information found within the specified File as an ArrayList<PairSchools>
    * @pre
@@ -88,7 +26,7 @@ public class Parser
    *    Method will throw an expeption if the specified file is incorrectly formatted
    *    -InvalidFormatException
    */
-  public static ArrayList<PairSchools> parse(File info)
+  public static Schedule parse(File info)
     throws Exception
   {
 
@@ -135,7 +73,7 @@ public class Parser
         lineNum++;
       }// while
     cr.close();
-    return theSchoolPairs;
+    return new Schedule(theSchoolPairs, generalDates, theSchools);
   }// parse(File info)
 
   /**
@@ -178,7 +116,7 @@ public class Parser
           }// try
         catch (Exception E)
           {
-            throw new InvalidFormatException("Incorrectly formatted data");
+            throw new Exception("Incorrectly formatted data");
           }// catch
         // For each PairSchools, we set the home and away school
         for (School theSchool : theSchools)
@@ -226,7 +164,8 @@ public class Parser
     tempDates.removeAll(noPlayDates);
     tempDates.removeAll(mustPlayDates);
     @SuppressWarnings("unchecked")
-    ArrayList<ScheduleDate> properOrderMustPlayDates = (ArrayList<ScheduleDate>) generalDates.clone();
+    ArrayList<ScheduleDate> properOrderMustPlayDates =
+        (ArrayList<ScheduleDate>) generalDates.clone();
     properOrderMustPlayDates.retainAll(mustPlayDates);
     // Make new school
     return new School(segments[0], properOrderMustPlayDates, tempDates);
@@ -257,7 +196,7 @@ public class Parser
     // We loop through each string, parsing and saving to dates
     for (int count = 0; count < dateStrings.length; count++)
       {
-        theDates.add(parseDate(dateStrings[count],count));
+        theDates.add(parseDate(dateStrings[count], count));
       }// for
     return theDates;
   }// parseDates(String dateString)
@@ -266,7 +205,7 @@ public class Parser
    * Parses the String date passed to a ScheduleDate object
    * @pre
    *    date must be formatted as follows
-   *    11/12
+   *    11/12 - day/month
    * @param date - the string to generate the ScheduleDate object from
    * @throws Exception
    *    Method will throw an expeption if the specified file is incorrectly formatted
@@ -286,44 +225,8 @@ public class Parser
       }// try
     catch (Exception E)
       {
-        throw new InvalidFormatException("Incorrectly formatted data");
+        throw new Exception("Incorrectly formatted data");
       }// catch
     return theDate;
   }// parseDate(String date)
-
-  /**
-   * Saves the information found within the specified File as an ArrayList<ScheduleDate>
-   * @pre
-   *    info must be formatted as follows
-   *    Line 1:
-   *    [11/12,13/34]
-   *    dates in which most schools play
-   *    Line 2 - n:
-   *    Grinnell;[Cornell:10,IU:5]];[11/12,13/34];[5/2]
-   *    ------Name ; Distances ; noPlayDates ; mustPlayDates
-   *    
-   * @param info - the file to read data from
-   * @throws Exception
-   *    Method will throw an exception if the specified file does not exist
-   *    -fileNotFoundException
-   *    Method will throw an expeption if the specified file is incorrectly formatted
-   *    -InvalidFormatException
-   */
-  public static ArrayList<ScheduleDate> parseDates(File info)
-    throws Exception
-  {
-    BufferedReader br = new BufferedReader(new FileReader(info));
-    String line;
-    ArrayList<ScheduleDate> generalDates = new ArrayList<ScheduleDate>();
-    /*
-     * We read the first line of the file, generating ArrayList of ScheduleDate objects
-     */
-    if ((line = br.readLine()) != null)
-      {
-        generalDates = parseDates(line);
-      }// if
-    br.close();
-    return generalDates;
-  }// parseDates(File info)
-
-}// class Parser 
+}

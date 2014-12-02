@@ -6,6 +6,147 @@ import java.util.Random;
 public class UtilsSchedule
 {
 
+  public static void optimalSchedule(Schedule originalSchedule, int trials)
+  {
+
+    Schedule bestSchedule = originalSchedule.clone();
+    fillScheduleBasic(bestSchedule);
+    Schedule theSchedule;
+    for (int trial = 0; trial < trials; trial++)
+      {
+        System.out.println("Permuting");
+        theSchedule = bestSchedule.clone();
+        permute(theSchedule, 20);
+        if (rate(theSchedule) > rate(bestSchedule))
+          {
+            System.out.println("Permutation Saved!");
+            bestSchedule = theSchedule;
+          }
+      }
+    originalSchedule.theDates = bestSchedule.theDates;
+    originalSchedule.pairs = bestSchedule.pairs;
+  }
+
+  public static void permute(Schedule toPermute, int permutations)
+  {
+    Random permGen = new Random();
+    ArrayList<Day> daysToModify = toPermute.theDates;
+    ArrayList<ScheduleDate> noPermuteDates = findBackToBack(toPermute.allDates);
+    for (int perm = 0; perm < permutations; perm++)
+      {
+        Day toTakeFrom = daysToModify.get(permGen.nextInt(daysToModify.size()));
+        Day toAddTo = daysToModify.get(permGen.nextInt(daysToModify.size()));
+        if (toTakeFrom.matchesPlaying()
+            && !noPermuteDates.contains(toTakeFrom.theDate)
+            && !noPermuteDates.contains(toAddTo.theDate))
+          {
+            PairSchools toReallocate =
+                toTakeFrom.removeGame(permGen.nextInt(toTakeFrom.competing.size()));
+            toAddTo.addGame(toReallocate);
+          }
+      }
+
+  }
+
+  // Back to Backs will cause no violations
+  public static int rate(Schedule toRate)
+  {
+    int violations = 0;
+    for (Day gameTime : toRate.theDates)
+      {
+        // We do not need to check back to backs
+        ArrayList<School> playedSoFar = new ArrayList<School>();
+        for (PairSchools match : gameTime.competing)
+          {
+            // Does a school play multiple times in a day
+            if (playedSoFar.contains(match.home))
+              {
+                violations += 5;
+              }
+            else
+              {
+                playedSoFar.add(match.home);
+              }
+            if (playedSoFar.contains(match.away))
+              {
+                violations += 5;
+              }
+            else
+              {
+                playedSoFar.add(match.away);
+              }
+            // Can the schools actually play the day in question
+            if (!match.home.canPlay(gameTime.theDate))
+              {
+                violations += 2;
+              }
+            if (!match.away.canPlay(gameTime.theDate))
+              {
+                violations += 2;
+              }
+          }
+      }
+    // Do the schools play all must play dates? 
+    for (School toTest : toRate.schools)
+      {
+        // Each must play Date
+        for (ScheduleDate mustPlay : toTest.gameDates)
+          {
+            // Find corresponding date in the schedule
+            for (Day gameTime : toRate.theDates)
+              {
+                // Make sure is same date, if school doesn't play assess violation
+                if (gameTime.isDate(mustPlay) && !gameTime.schoolPlays(toTest))
+                  {
+                    // See if school plays on day
+                    violations += 2;
+                  }
+              }
+          }
+
+      }
+    return -violations;
+  }
+
+  public static void fillScheduleBasic(Schedule toFill)
+  {
+    ArrayList<ScheduleDate> omitDates = findBackToBack(toFill.allDates);
+    for (ScheduleDate potentialFill : toFill.allDates)
+      {
+        if (!omitDates.contains(potentialFill))
+          {
+            for (PairSchools pairToInsert : toFill.pairs)
+              {
+                if (pairToInsert.canAdd)
+                  {
+                    toFill.addGame(pairToInsert, potentialFill);
+                  }
+              }
+            break;
+          }
+      }
+  }
+
+  public static void optimalFillBackToBack(Schedule originalSchedule,
+                                           int trials, int allowedTravel)
+  {
+    Schedule bestSchedule = originalSchedule.clone();
+    Schedule theSchedule;
+    fillBackToBackWeekendsNew(bestSchedule);
+    for (int trial = 0; trial < trials; trial++)
+      {
+        theSchedule = originalSchedule.clone();
+        fillBackToBackWeekendsNew(theSchedule);
+        if (backToBackWeekendRanking(theSchedule, allowedTravel) > backToBackWeekendRanking(bestSchedule,
+                                                                                            allowedTravel))
+          {
+            bestSchedule = theSchedule;
+          }
+      }
+    originalSchedule.theDates = bestSchedule.theDates;
+    originalSchedule.pairs = bestSchedule.pairs;
+  }
+
   public static ArrayList<ScheduleDate>
     findBackToBack(ArrayList<ScheduleDate> dates)
   {
@@ -29,336 +170,124 @@ public class UtilsSchedule
     return backToBacks;
   }
 
-  
-  
-  
-  public static boolean canAdd(PairSchools theMatch, ScheduleDate theDate,
-                               Schedule addTo)
+  private static int backToBackWeekendRanking(Schedule theSchedule,
+                                              int maxRecommended)
   {
-    if (!theMatch.canAdd)
+    ArrayList<ScheduleDate> backToBackDates =
+        findBackToBack(theSchedule.allDates);
+    int excessiveDistances = 0;
+    for (ScheduleDate theDay : backToBackDates)
       {
-        return false;
-      }
-    
-    if (!theMatch.home.canPlay(theDate) || !theMatch.away.canPlay(theDate))
-      {
-        return false;
-      }
-    int foundDates = 0;
-    int validAddition = 1;
-    ArrayList<ScheduleDate> allDates = addTo.allDates;
-    ArrayList<Game> gameList = addTo.gameList;
-    for (int iter = 0; iter < allDates.size(); iter++)
-      {
-        if (allDates.get(iter).equals(theDate))
+        for (Day scheduleDay : theSchedule.theDates)
           {
-            foundDates++;
-          }
-      }
-
-    for (int iter = 0; iter < gameList.size(); iter++)
-      {
-        PairSchools existantGamePair = gameList.get(iter).competing;
-        if (gameList.get(iter).dayOfCalendar.equals(theDate))
-          {
-            if (theMatch.home == existantGamePair.home
-                || theMatch.home == existantGamePair.away)
+            if (scheduleDay.isDate(theDay))
               {
-                validAddition = 0;
-              }
-            if (theMatch.away == existantGamePair.home
-                || theMatch.away == existantGamePair.away)
-              {
-                validAddition = 0;
+                for (PairSchools match : scheduleDay.competing)
+                  {
+                    excessiveDistances +=
+                        Math.max(match.distance - maxRecommended, 0)
+                            * Math.max(match.distance - maxRecommended, 0);
+                  }
+                break;
               }
           }
       }
-    return (foundDates == 1) && (validAddition == 1);
+    return -excessiveDistances;
   }
 
-  
-  
-
-  public static Schedule mergeSchedule(Schedule A, Schedule B)
+  private static void fillBackToBackWeekendsNew(Schedule toFill)
   {
-    A.allDates.addAll(B.allDates);
-    A.gameList.addAll(B.gameList);
-    return A;
-  }
-
-  
-  
-
-  private static Schedule
-    fillBackToBackWeekend(ScheduleDate sat, ScheduleDate sun,
-                          ArrayList<School> cantHome,
-                          ArrayList<School> cantAway,
-                          ArrayList<PairSchools> theMatches, int numSchools, ArrayList<School> schools)
-  {
-    ArrayList<ScheduleDate> theDates = new ArrayList<ScheduleDate>();
-    theDates.add(sat);
-    theDates.add(sun);
-    Schedule soFar = new Schedule(null, theDates, numSchools, schools);
+    ArrayList<ScheduleDate> backToBackDates = findBackToBack(toFill.allDates);
+    ArrayList<School> cantHome = new ArrayList<School>();
+    ArrayList<School> cantAway = new ArrayList<School>();
+    ArrayList<PairSchools> theMatches = toFill.pairs;
+    int numSchools = toFill.numSchools();
     Random dice = new Random();
-    boolean added = false;
-    int firstPairNum = 0;
-    while (!added)
+    for (int weekends = 0; weekends < 2; weekends++)
       {
-        firstPairNum = dice.nextInt(theMatches.size());
-        PairSchools addPairSchool = theMatches.get(firstPairNum);
-        if (addPairSchool.canAdd && !cantHome.contains(addPairSchool.home)
-            && !cantAway.contains(addPairSchool.away))
+        ScheduleDate sat = backToBackDates.get(2 * weekends);
+        ScheduleDate sun = backToBackDates.get(2 * weekends + 1);
+        boolean added = false;
+        int firstPairNum = 0;
+        // We add the first day to saturday
+        while (!added)
           {
-            System.out.println("Adding " + addPairSchool.home.name + " vs "
-                               + addPairSchool.away.name + " to saturday");
-            soFar.addGame(new Game(addPairSchool, sat));
-            added = true;
+            firstPairNum = dice.nextInt(theMatches.size());
+            PairSchools addPairSchool = theMatches.get(firstPairNum);
+            if (!cantHome.contains(addPairSchool.home)
+                && !cantAway.contains(addPairSchool.away))
+              {
+                toFill.addGame(addPairSchool, sat);
+                added = true;
+              }
           }
-      }
-    School firstSchool = theMatches.get(firstPairNum).home;
-    cantHome.add(firstSchool);
-    School prevSchool = theMatches.get(firstPairNum).away;
-    cantAway.add(prevSchool);
-    boolean found;
-    for (int count = 0; count < numSchools - 2; count++)
-      {
+        // Register that we have added the first day
+        School firstSchool = theMatches.get(firstPairNum).home;
+        cantHome.add(firstSchool);
+        School prevSchool = theMatches.get(firstPairNum).away;
+        cantAway.add(prevSchool);
+        boolean found;
+        for (int count = 0; count < numSchools - 2; count++)
+          {
+            found = false;
+            if (count % 2 == 0)//even, sunday
+              {
+                while (!found)
+                  {
+                    int pairNum = dice.nextInt(theMatches.size());
+                    PairSchools toInsert = theMatches.get(pairNum);
+                    if (toInsert.away.equals(prevSchool)
+                        && toFill.canAdd(toInsert, sun)
+                        && !cantHome.contains(toInsert.home))
+                      {
+                        found = true;
+                        toFill.addGame(toInsert, sun);
+                        prevSchool = toInsert.home;
+                        cantHome.add(prevSchool);
+                      }
+                  }
+
+              }
+            else
+              //saturday
+              {
+                while (!found)
+                  {
+                    int pairNum = dice.nextInt(theMatches.size());
+                    PairSchools toInsert = theMatches.get(pairNum);
+                    if (toInsert.home.equals(prevSchool.name)
+                        && toFill.canAdd(toInsert, sat)
+                        && !cantAway.contains(toInsert.away))
+                      {
+                        found = true;
+                        toFill.addGame(toInsert, sat);
+                        prevSchool = toInsert.away;
+                        cantAway.add(prevSchool);
+                      }
+                  }
+              }
+
+          }
         found = false;
-        if (count % 2 == 0)//even, sunday
+        while (!found)
           {
-            while (!found)
+            int pairNum = dice.nextInt(theMatches.size());
+            PairSchools toInsert = theMatches.get(pairNum);
+            /*
+             *  We add the last SchoolPair to complete the back to back weekend
+             *  We must add an existing SchoolPair instead of a new one so that 
+             *  we ensure we have the distance correct
+             */
+            if (toInsert.away.equals(prevSchool.name)
+                && toInsert.home.equals(firstSchool.name))
               {
-                int pairNum = dice.nextInt(theMatches.size());
-                PairSchools toInsert = theMatches.get(pairNum);
-                if (toInsert.away.equals(prevSchool.name) && canAdd(toInsert, sun, soFar)
-                    && toInsert.canAdd && !toInsert.home.equals(firstSchool)
-                    && !cantHome.contains(toInsert.home))
-                  {
-                    System.out.println("Adding " + toInsert.home.name + " vs "
-                                       + toInsert.away.name + " to sunday");
-                    found = true;
-                    soFar.addGame(new Game(toInsert, sun));
-                    prevSchool = toInsert.home;
-                    cantHome.add(prevSchool);
-                  }
-              }
-
-          }
-        else
-          //saturday
-          {
-            while (!found)
-              {
-                int pairNum = dice.nextInt(theMatches.size());
-                PairSchools toInsert = theMatches.get(pairNum);
-                if (toInsert.home.equals(prevSchool.name) && canAdd(toInsert, sat, soFar)
-                    && toInsert.canAdd && !cantAway.contains(toInsert.away))
-                  {
-
-                    System.out.println("Adding " + toInsert.home.name + " vs "
-                                       + toInsert.away.name + " to saturday");
-                    found = true;
-                    soFar.addGame(new Game(toInsert, sat));
-                    prevSchool = toInsert.away;
-                    cantAway.add(prevSchool);
-                  }
-              }
-          }
-
-      }
-    found = false;
-    while (!found)
-      {
-        int pairNum = dice.nextInt(theMatches.size());
-        PairSchools toInsert = theMatches.get(pairNum);
-
-        if (toInsert.away.equals(prevSchool.name)
-            && toInsert.home.equals(firstSchool.name) && toInsert.canAdd)
-          {
-            System.out.println("Adding " + toInsert.home.name + " vs "
-                               + toInsert.away.name + " to sunday");
                 found = true;
-                soFar.addGame(new Game(toInsert, sun));
-          }
-      }
-
-    return soFar;
-  }
-
-  public static Schedule fillBackToBackWeekends(ScheduleDate sat, ScheduleDate sun,
-                                         ScheduleDate sat2, ScheduleDate sun2,
-                                         ArrayList<PairSchools> theMatches,
-                                         int numSchools,ArrayList<School> schools)
-  {
-    ArrayList<School> cantPlayHome = new ArrayList<School>();
-    ArrayList<School> cantPlayAway = new ArrayList<School>();
-    Schedule schedule1 = fillBackToBackWeekend(sat,sun,cantPlayHome,cantPlayAway,theMatches,numSchools,schools);
-    Schedule schedule2= fillBackToBackWeekend(sat2,sun2,cantPlayHome,cantPlayAway,theMatches,numSchools,schools);
-    
-    
-    
-    
-    return mergeSchedule(schedule1, schedule2);
-  }
-  
-  private class AllocatedSchool
-  {
-    School theSchool;
-    
-    ArrayList<ScheduleDate> needToPlayGames;
-    
-    @SuppressWarnings("unchecked")
-    AllocatedSchool(School theSchool)
-    {
-      this.theSchool=theSchool;
-      needToPlayGames=(ArrayList<ScheduleDate>)theSchool.gameDates.clone();
-    }
-    
-    
-    public boolean allPlayed()
-    {
-      return needToPlayGames.size()==0;
-    }
-    
-    public boolean metRequirement(ScheduleDate theDate)
-    {
-      return needToPlayGames.remove(theDate);
-    }
-    
-    public ScheduleDate getRequirement()
-    {
-      return needToPlayGames.get(0);
-    }
-    
-    public School getSchool()
-    {
-      return theSchool;
-    }
-    
-    public void registerGame(Game played)
-    {
-      if (played.isPlaying(theSchool))
-        {
-          metRequirement(played.dayOfCalendar);
-        }
-    }
-     
-  }
-  
-  
-  public static PairSchools randomPair(ArrayList<PairSchools> theMatches)
-  {
-    Random dice = new Random();
-    int pairNum = dice.nextInt(theMatches.size());
-    return theMatches.get(pairNum);
-  }
-  
-  // gets a random pair where the school is playing
-  public static PairSchools randomPairWithSchool(ArrayList<PairSchools> theMatches,School theSchool)
-  {
-    PairSchools found=randomPair(theMatches);
-    int count=0;
-    while(!found.home.equals(theSchool) && !found.away.equals(theSchool))
-      {
-        found=randomPair(theMatches);
-        count++;
-        if (count>1000)
-          {
-            System.out.println("randomPairWithSchool Broke");
-          }
-      }
-    return found;
-  }
-  
-  //DO NOT PUT BACK TO BACK WEEKENDS AS MUST PLAY DATES
-  //Are we responsible for hash table lab report
-  public static Schedule fillDates(ArrayList<ScheduleDate> theDates, ArrayList<PairSchools> theMatches, ArrayList<School> theSchools)
-  {
-    UtilsSchedule Dummy = new UtilsSchedule();
-    Schedule generated = new Schedule(theMatches,theDates,theSchools.size(),theSchools);
-    ArrayList<AllocatedSchool> schoolRequirements = new ArrayList<AllocatedSchool>();
-    for (School school : theSchools)
-    {
-      schoolRequirements.add(Dummy.new AllocatedSchool(school));
-    }
-    // We make sure every school plays on must play dates
-    for (AllocatedSchool toSatisfy : schoolRequirements)
-    {
-      // Until the school has played all needed games
-      while(!toSatisfy.allPlayed())
-        {
-          // We get a random pair where the school is playing 
-          PairSchools toInsert = randomPairWithSchool(theMatches,toSatisfy.getSchool());
-          // We get new pairs with the school until we can actually add it to the date
-          while (!canAdd(toInsert,toSatisfy.getRequirement(),generated))
-            {
-              toInsert = randomPairWithSchool(theMatches,toSatisfy.getSchool());
-            }
-          // We add the game to our schedule
-          Game played = new Game(toInsert,toSatisfy.getRequirement());
-          generated.addGame(played);
-          // We register that both the home and away schools have played
-          for (AllocatedSchool satisfied : schoolRequirements)
-            {
-              satisfied.registerGame(played);
-            }  
-        }
-    }
-    
-    // We place remaining PairSchools objects into schedule
-    for (PairSchools toInsert : theMatches)
-      {
-        if (toInsert.canAdd)
-          {
-            ScheduleDate tryDate = randomScheduleDate(theDates);
-            int count=0;
-            while(!canAdd(toInsert,tryDate,generated))
-              {
-                tryDate = randomScheduleDate(theDates);
-                count++;
-                if (count > 1000)
-                  {
-                    //System.out.println("Giving up on "+toInsert.);
-                    break;
-                  }
+                toFill.addGame(toInsert, sun);
               }
-            generated.addGame(new Game(toInsert,tryDate));
           }
+
       }
-    
-    
-    
-    
-    return generated;
+
   }
-  
-  
-public static ScheduleDate randomScheduleDate(ArrayList<ScheduleDate> theDates)
-{
-  Random dice = new Random();
-  int dateNum = dice.nextInt(theDates.size());
-  return theDates.get(dateNum);
-}
-  
- 
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
 
 }

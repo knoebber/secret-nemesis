@@ -2,6 +2,7 @@ package csc207.HWNA.scheduler;
 
 import java.util.ArrayList;
 
+
 /**
  * @author Harry Baker
  * @author William Royle
@@ -12,9 +13,10 @@ import java.util.ArrayList;
  *
  * Holds the information regarding a specific school which is relevant to
  * scheduling purposes. It includes the name of the school and the dates
- * when the school can play, and the dates when the school must play
+ * when the school can play, and the dates when the school must play. Schools
+ * are immutable
  */
-public class School
+final public class School
 {
 
   // +--------+------------------------------------------------------------
@@ -78,23 +80,31 @@ public class School
       }// for
   }// printInfo()
   
+  
+  
   public boolean canPlay(ScheduleDate thisDay)
   {
-    for (int iter=0;iter<gameDates.size();iter++)
+    for (ScheduleDate potentialGameDate : gameDates)
       {
-        if (thisDay.equals(gameDates.get(iter)))
+        if (thisDay.equals(potentialGameDate))
           {
             return true;
           }
       }
-    for (int iter=0;iter<optionalGameDates.size();iter++)
+    for (ScheduleDate potentialGameDate : optionalGameDates)
       {
-        if (thisDay.equals(optionalGameDates.get(iter)))
+        if (thisDay.equals(potentialGameDate))
           {
             return true;
           }
       }
     return false;
+  }
+  
+  
+  public String toString()
+  {
+    return name;
   }
   
 

@@ -2,16 +2,13 @@ package csc207.HWNA.scheduler;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
-
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
@@ -19,13 +16,11 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
-import javafx.stage.Popup;
 import javafx.stage.Stage;
 /**
  * @author Harry Baker
@@ -118,8 +113,9 @@ public class GUI
     Scene helpScene = new Scene(helpPane, 565, 280);
     helpWindow.setScene(helpScene);
     helpPane.getStyleClass().add("popup");
-    Image img = new Image("exampleschedule.png");
+    Image img = new Image("exampleschedule.PNG");
     ImageView imgView = new ImageView(img);
+    helpPane.getChildren().add(imgView);
     //imgView.
     //helpPane.getStylesheets().add(getClass().getResource("popup.css").toExternalForm()); 
     //TODO: write css for pop up
@@ -167,10 +163,12 @@ public class GUI
         public void handle(ActionEvent event) //this is called on click
         {
           //make an object that can open a file
+          System.out.println("here");
           FileChooser fileChooser = new FileChooser();
           fileChooser.setTitle("Open Resource File");
           info = fileChooser.showOpenDialog(primaryStage);
-          openedFile.setText(info.getPath());
+          if(info!=null)
+            openedFile.setText(info.getPath());
 
         }//handle
       });
@@ -185,37 +183,17 @@ public class GUI
               //schools = Parser.parse(info);
               try
                 {
-                  ArrayList<PairSchools> thePairs = Parser.parse(info);
-                  ArrayList<ScheduleDate> theDates = Parser.parseDates(info);
-                  ArrayList<School> theSchools = Parser.parseSchools(info);
-                  int schools = Parser.parseSchoolCount(info);
-                  Schedule.generateSchedule(thePairs, theDates, schools,theSchools);
-                  //dummy.generateDummySchedule();
-                  //Schedule important = UtilsSchedule.fillBackToBackDates(theDates.get(0),theDates.get(1), thePairs,schools);
-                  //Schedule important2 = UtilsSchedule.fillBackToBackDates(theDates.get(6),theDates.get(7), thePairs,schools);
-                  //Schedule toWrite = UtilsSchedule.mergeSchedule(important, important2);
-      //            Schedule realImportant = UtilsSchedule.fillBackToBackWeekends(theDates.get(0),theDates.get(1),
-      //                                                            theDates.get(6),theDates.get(7),
-      //                                                            thePairs, schools);
-      //            ScheduleWriter.write(realImportant, info.getParent() + "/importantschedule.txt");
-                  //ScheduleDate testAddDate = test.allDates.get(3);
-                  //System.out.println(testAddDate.month);
-                  //PairSchools testAddPairSchools = test.gameList.get(0).competing;
-                  //System.out.println("Home School = "+testAddPairSchools.home.name+" Away School="+testAddPairSchools.away.name);
-                  //System.out.println(UtilsSchedule.canAdd(testAddPairSchools, testAddDate,test));
-                  
-
-                  //put the output in the same directory as where the file was chosen
-                  //Collections.sort(theDates);
-                  //sort the dates so they are in order
-
-                  //ScheduleWriter.write(dummy, info.getParent() + "/schedule.txt");
+                  Schedule originalSchedule = Parser.parse(info);
+                  UtilsSchedule.optimalFillBackToBack(originalSchedule, 0, 0);
+                  UtilsSchedule.optimalSchedule(originalSchedule,2000);
+                  //UtilsSchedule.basicFill(originalSchedule);
+                  ScheduleWriter.write(originalSchedule ,info.getParent()+"/schedule.txt");
                   finished.setText("Wrote schedule:"); //tell user that it was wrote
                   finalPath.setText(info.getParent() + "/schedule.txt");
                 }//try
               catch (Exception e)
                 {
-                  e.printStackTrace();
+                  //e.printStackTrace();
                 }//catch
               //Scheduler.generate(schools)
             }//if info !=null
@@ -228,7 +206,7 @@ public class GUI
         @Override
         public void handle(ActionEvent event) {
           helpWindow.show();
-          helpPane.getChildren().add(imgView);
+          
         }
     });
 

@@ -1,5 +1,8 @@
 package csc207.HWNA.scheduler;
 
+//import PairSchools;
+//import School;
+
 /**
  * @author Harry Baker
  * @author William Royle
@@ -20,17 +23,17 @@ class PairSchools
   /**
    * The school which is playing home during this match
    */
-  School home;
+  final School home;
 
   /**
    * The school which is playing away during this match
    */
-  School away;
+  final School away;
 
   /**
    * The driving distance between the two schools
    */
-  int distance;
+  final int distance;
   
   boolean canAdd=true;
 
@@ -68,16 +71,6 @@ class PairSchools
     return false;
   }// equals(PairSchools other)
 
-  /**
-   * Prints a brief summary of the PairSchools object to stdout
-   */
-  public void print()
-  {
-    System.out.println("Home School is " + home.name);
-    System.out.println("Away School is " + away.name);
-    System.out.println("Distance is " + distance);
-    System.out.println();
-  }// print()
   
   
   public boolean isPlaying(School theSchool)
@@ -87,9 +80,14 @@ class PairSchools
   
   public String toString()
   {
-    return null; 
+    return "["+home.toString()+" vs "+away.toString()+"]";
   }
-  
-  
+ 
+  public PairSchools clone()
+  {
+    PairSchools theCopy = new PairSchools(home, away, distance);
+    theCopy.canAdd=canAdd;
+    return theCopy;
+  }
 
 }// class PairSchools

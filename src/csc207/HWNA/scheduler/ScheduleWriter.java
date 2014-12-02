@@ -3,9 +3,6 @@ package csc207.HWNA.scheduler;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-
-
 
 /**
  * @author Harry Baker
@@ -32,30 +29,8 @@ public class ScheduleWriter
   static void write(Schedule schedule, String fileName)
     throws Exception
   {
-    PrintWriter writer = new PrintWriter(fileName, "UTF-8"); 
-    ArrayList<ScheduleDate> theDates = schedule.allDates;
-    ArrayList<Game> theGames = schedule.gameList;
-    for (int date = 0; date < theDates.size(); date++)
-      {
-        ScheduleDate theDate=theDates.get(date);
-        boolean found=false;
-        writer.print(theDate.day+"/"+theDate.month+":");
-        for (int game = 0; game < theGames.size(); game++)
-          {
-            Game theGame=theGames.get(game);
-            if (theGame.dayOfCalendar.equals(theDate))
-              {
-                found=true;
-                writer.print("["+theGame.competing.home.name +" vs "+ theGame.competing.away.name+"]");
-              }
-          }
-        if (found)
-          {
-            writer.print(";");
-          }
-        writer.println();
-      }
-
+    PrintWriter writer = new PrintWriter(fileName, "UTF-8");
+    writer.print(schedule.toString());
     writer.close();
   }
 }
