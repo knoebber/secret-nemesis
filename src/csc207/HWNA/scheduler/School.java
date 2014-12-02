@@ -60,26 +60,8 @@ final public class School
   // | Methods |
   // +---------+
 
-  /**
-   * Print a representation of the school to stdout
-   */
-  public void printInfo()
-  {
-    System.out.println("School name is " + this.name);
-    // We print the mandatory game dates
-    System.out.println("Mandatory Game Days:");
-    for (int i = 0; i < gameDates.size(); i++)
-      {
-        gameDates.get(i).printDate();
-      }// for
-    // We print the optional game dates
-    System.out.println("Optional Game Days:");
-    for (int i = 0; i < optionalGameDates.size(); i++)
-      {
-        optionalGameDates.get(i).printDate();
-      }// for
-  }// printInfo()
-  
+
+
   
   
   public boolean canPlay(ScheduleDate thisDay)

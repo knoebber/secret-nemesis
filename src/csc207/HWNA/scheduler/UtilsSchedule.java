@@ -23,14 +23,14 @@ public class UtilsSchedule
             bestSchedule = theSchedule;
           }
       }
-    originalSchedule.theDates = bestSchedule.theDates;
+    originalSchedule.theDays = bestSchedule.theDays;
     originalSchedule.pairs = bestSchedule.pairs;
   }
 
   public static void permute(Schedule toPermute, int permutations)
   {
     Random permGen = new Random();
-    ArrayList<Day> daysToModify = toPermute.theDates;
+    ArrayList<Day> daysToModify = toPermute.theDays;
     ArrayList<ScheduleDate> noPermuteDates = findBackToBack(toPermute.allDates);
     for (int perm = 0; perm < permutations; perm++)
       {
@@ -45,14 +45,14 @@ public class UtilsSchedule
             toAddTo.addGame(toReallocate);
           }
       }
-
+    
   }
 
   // Back to Backs will cause no violations
   public static int rate(Schedule toRate)
   {
     int violations = 0;
-    for (Day gameTime : toRate.theDates)
+    for (Day gameTime : toRate.theDays)
       {
         // We do not need to check back to backs
         ArrayList<School> playedSoFar = new ArrayList<School>();
@@ -93,7 +93,7 @@ public class UtilsSchedule
         for (ScheduleDate mustPlay : toTest.gameDates)
           {
             // Find corresponding date in the schedule
-            for (Day gameTime : toRate.theDates)
+            for (Day gameTime : toRate.theDays)
               {
                 // Make sure is same date, if school doesn't play assess violation
                 if (gameTime.isDate(mustPlay) && !gameTime.schoolPlays(toTest))
@@ -143,7 +143,7 @@ public class UtilsSchedule
             bestSchedule = theSchedule;
           }
       }
-    originalSchedule.theDates = bestSchedule.theDates;
+    originalSchedule.theDays = bestSchedule.theDays;
     originalSchedule.pairs = bestSchedule.pairs;
   }
 
@@ -155,9 +155,9 @@ public class UtilsSchedule
     for (int i = 0; i < (dates.size() - 1); i++)
       {
         ScheduleDate trackerDate1 = dates.get(i);
-        int date1 = trackerDate1.get365();
+        int date1 = trackerDate1.get364();
         ScheduleDate trackerDate2 = dates.get(i + 1);
-        int date2 = trackerDate2.get365();
+        int date2 = trackerDate2.get364();
         int dateDifference = date2 - date1;
         // explain leap year, loop logic for dec 31 jan 1
         if (dateDifference == 1 || dateDifference == -364
@@ -178,7 +178,7 @@ public class UtilsSchedule
     int excessiveDistances = 0;
     for (ScheduleDate theDay : backToBackDates)
       {
-        for (Day scheduleDay : theSchedule.theDates)
+        for (Day scheduleDay : theSchedule.theDays)
           {
             if (scheduleDay.isDate(theDay))
               {
@@ -237,7 +237,7 @@ public class UtilsSchedule
                     int pairNum = dice.nextInt(theMatches.size());
                     PairSchools toInsert = theMatches.get(pairNum);
                     if (toInsert.away.equals(prevSchool)
-                        && toFill.canAdd(toInsert, sun)
+                        && toFill.canAddToDate(toInsert, sun)
                         && !cantHome.contains(toInsert.home))
                       {
                         found = true;
@@ -256,7 +256,7 @@ public class UtilsSchedule
                     int pairNum = dice.nextInt(theMatches.size());
                     PairSchools toInsert = theMatches.get(pairNum);
                     if (toInsert.home.equals(prevSchool.name)
-                        && toFill.canAdd(toInsert, sat)
+                        && toFill.canAddToDate(toInsert, sat)
                         && !cantAway.contains(toInsert.away))
                       {
                         found = true;

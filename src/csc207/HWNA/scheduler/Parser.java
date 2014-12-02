@@ -1,43 +1,67 @@
 package csc207.HWNA.scheduler;
 
+
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
 
+/**
+ * @author Harry Baker
+ * @author William Royle
+ * @author Nicolas Knoebber
+ * @author Amanda Hinchman
+ * 
+ * @date November 22, 2014
+ * (Refactored December 1, 2014)
+ *
+ * Utilies which allow a blank schedule to be loaded from a file, as long as
+ * the file is formatted as specified by the method preconditions
+ */
 public class Parser
 {
 
+  // +---------+-----------------------------------------------------------
+  // | Methods |
+  // +---------+
+
   /**
-   * Saves the information found within the specified File as an ArrayList<PairSchools>
+   * Saves the information found within the specified File as a Schedule object, with no
+   * PairSchools objects allocated to specific Day Objects. We parse for a round robin 
+   * schedule, and thus we have two PairSchools objects in our generated schedule for two
+   * schools, one for the home match and one for the away match.
+   * 
+   * @param info - the file to read data from
    * @pre
    *    info must be formatted as follows
    *    Line 1:
-   *    [11/12,13/34]
-   *    dates in which most schools play
-   *    Line 2 - n:
+   *    [11/12,13/1]
+   *    (day/month) all potential game dates. It is assumed that no games can occur on dates
+   *    not in this list. It is also assumed that the user enters the dates in chronological
+   *    order
+   *    Lines 2 - n:
    *    Grinnell;[Cornell:10,IU:5]];[11/12,13/34];[5/2]
-   *    ------Name ; Distances ; noPlayDates ; mustPlayDates
+   *       Name ;     Distances    ; noPlayDates ; mustPlayDates
    *    
-   * @param info - the file to read data from
    * @throws Exception
    *    Method will throw an exception if the specified file does not exist
    *    -fileNotFoundException
-   *    Method will throw an expeption if the specified file is incorrectly formatted
-   *    -InvalidFormatException
+   *    Method will throw an exception if the specified file does not exist / is incorrectly formatted
+   *    -Exception
    */
   public static Schedule parse(File info)
     throws Exception
   {
-
+    // We open the file
     BufferedReader br = new BufferedReader(new FileReader(info));
+    // Saves each line read from file
     String line;
+    // Components of the info saved from the gile
     ArrayList<ScheduleDate> generalDates = new ArrayList<ScheduleDate>();
     ArrayList<School> theSchools = new ArrayList<School>();
     ArrayList<PairSchools> theSchoolPairs = new ArrayList<PairSchools>();
-    /*
-     * We read the file line by line, generating school objects as we go
-     */
+    // We read the file line by line, generating school objects as we go
     int lineNum = 0;
     while ((line = br.readLine()) != null && !line.trim().isEmpty())
       {
@@ -46,17 +70,18 @@ public class Parser
           {
             generalDates = parseDates(line);
           }// if
-        // Each subsequent line has information for a school
+        // Each subsequent line has information for a school, which we save
         else
           {
             theSchools.add(processLine(line, generalDates));
           }// else
         lineNum++;
-      }// while
+      }// while ((line = br.readLine()) != null && !line.trim().isEmpty())
     br.close();
     /*
-     * We loop through again, saving information for each SchoolPair
-     * we go. 
+     * We loop through again, saving information for each SchoolPair as
+     * we go. Two reads are needed, as we cannot generate the SchoolPair objects
+     * until we have the School objects set up
      */
     lineNum = 0;
     BufferedReader cr = new BufferedReader(new FileReader(info));
@@ -64,7 +89,7 @@ public class Parser
       {
         /*
          *  For all lines except the first, we have one school per line, so
-         *  we save it to the array of schools
+         *  we save each pair involving that school playing home to the schoolPairs
          */
         if (lineNum != 0)
           {
@@ -78,15 +103,15 @@ public class Parser
 
   /**
    * Saves the information found within the specified string as an ArrayList<PairSchools>
-   * @pre
-   *    line must be formatted as follows
-   *    Grinnell;[Cornell:10,IU:5];[11/12,13/34];[5/2]
-   *    Name ; Distances ; noPlayDates ; mustPlayDates
    * @param line - the string to generate SchoolPairs from
    *        theSchools - the ArrayList of Schools which exist
+   * @pre
+   *    line must be formatted as follows
+   *    Grinnell;[Cornell:10,IU:5];[11/12,13/1];[5/2]
+   *       Name ;     Distances   ; noPlayDates ; mustPlayDates
    * @throws Exception
-   *    Method will throw an expeption if the specified file is incorrectly formatted
-   *    -InvalidFormatException
+   *    Method will throw an exception if the specified file is incorrectly formatted
+   *    -Exception
    */
   private static ArrayList<PairSchools>
     getSchoolPairs(String line, ArrayList<School> theSchools)
@@ -132,18 +157,18 @@ public class Parser
           }// for
         // We add the found PairSchools
         theSchoolPairs.add(new PairSchools(home, away, distance));
-      }// for
+      }// for (String Distance : Distances)
     return theSchoolPairs;
   }// getSchoolPairs(String line, ArrayList<School> theSchools)
 
   /**
    * Parses the line passed to return a School, using generalDates as the default dates
-   * @pre
-   *    line must be formatted as follows
-   *    Grinnell;[Cornell:10,IU:5]];[11/12,13/34];[5/2]
-   *    Name ; Distances ; noPlayDates ; mustPlayDates
    * @param line - the string to generate the school from
    *        generalDates - Default dates for the school to play
+   * @pre
+   *    line must be formatted as follows
+   *    Grinnell;[Cornell:10,IU:5]];[11/12,13/1];[5/2]
+   *       Name ;     Distances    ; noPlayDates ; mustPlayDates
    * @throws Exception
    *    Method will throw an expeption if the specified file is incorrectly formatted
    *    -InvalidFormatException
@@ -152,7 +177,10 @@ public class Parser
                                     ArrayList<ScheduleDate> generalDates)
     throws Exception
   {
-    // We split on ;
+    /*
+     *  We split on ; which gives us school name (segments[0]), distances (segments[1])
+     *  noPlaydates(segments[2]), mustPlaydates(segments[3])
+     */
     String[] segments = line.split(";");
     ArrayList<ScheduleDate> noPlayDates = parseDates(segments[2]);
     ArrayList<ScheduleDate> mustPlayDates = parseDates(segments[3]);
@@ -173,10 +201,11 @@ public class Parser
 
   /**
    * Parses the dateString passed to return an ArrayList of ScheduleDate objects
+   * @param dateString - the string to generate the ScheduleDate objects from
    * @pre
    *    dateString must be formatted as follows
-   *    [11/12,13/34]
-   * @param dateString - the string to generate the ScheduleDate objects from
+   *    [11/12,13/1]
+   *    (day/month)
    * @throws Exception
    *    Method will throw an expeption if the specified dateString is incorrectly formatted
    *    -InvalidFormatException
@@ -203,10 +232,10 @@ public class Parser
 
   /**
    * Parses the String date passed to a ScheduleDate object
+   * @param date - the string to generate the ScheduleDate object from
    * @pre
    *    date must be formatted as follows
    *    11/12 - day/month
-   * @param date - the string to generate the ScheduleDate object from
    * @throws Exception
    *    Method will throw an expeption if the specified file is incorrectly formatted
    *    -InvalidFormatException
@@ -229,4 +258,4 @@ public class Parser
       }// catch
     return theDate;
   }// parseDate(String date)
-}
+}// class Parser
