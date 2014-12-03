@@ -34,8 +34,9 @@ import javafx.stage.Stage;
  * @date November 18, 2014
  * 
  * Creates the GUI. 
- * Allows the user to specify a file to use and when
- * to generate the schedule. 
+ * Allows the user to specify a file to use, 
+ * the parameters for the algorithm, and when to generate the schedule. 
+ * Also provides an explanation of the input format
  * 
  * Got help from
  * http://stackoverflow.com/questions/22627579/how-load-css-file-in-javafx8
@@ -49,9 +50,16 @@ public class GUI
   ArrayList<Date> dates;
   ArrayList<PairSchools> schools;
   boolean showingSettings = false;
-  int trials = 10000;
+  int trials = 1000000;
   int permutations = 3;
 
+  /**
+   * A template for making a TextField
+   * @param prompt, what the text field should say by default
+   * @param x, x location on screen
+   * @param y, y location on screen
+   * @return a positioned TextField
+   */
   private TextField makeTextField(String prompt, int x, int y)
   {
     TextField field = new TextField(prompt);
@@ -61,6 +69,13 @@ public class GUI
     return field;
   }
 
+  /**
+   * A template for making a Button
+   * @param name, the label on the button
+   * @param x location on screen
+   * @param y location on screen
+   * @return a positioned Button
+   */
   private Button makeButton(String name, int x, int y)
   {
     Button button = new Button(name);
@@ -72,6 +87,13 @@ public class GUI
     return button;
   }
 
+  /**
+   * a template for creating a blank Text
+   * 
+   * @param x location on screen
+   * @param y location on screen
+   * @return
+   */
   private Text makeText(int x, int y)
   {
     Text text = new Text();
@@ -83,6 +105,9 @@ public class GUI
     return text;
   }
 
+  /**
+   * Starts the GUI
+   */
   @Override
   public void start(Stage primaryStage)
   {
@@ -93,11 +118,14 @@ public class GUI
     //Pane allows for most basic positioning
     pane.setPadding(new Insets(25, 25, 25, 25));
     Scene scene = new Scene(pane, 500, 500);
+    //add css to the scene
     scene.getStylesheets().add(getClass().getResource("application.css")
                                          .toExternalForm());
+    //give the css a way to modify the pane
     pane.getStyleClass().add("root");
-
-    //Make the red to black gradient box
+    /*
+     * Make the red to black gradient box
+     */
     Stop[] stops =
         new Stop[] { new Stop(0, Color.BLACK), new Stop(1, Color.DARKRED) };
     LinearGradient linearGradient =
@@ -107,7 +135,6 @@ public class GUI
     rectangle.setLayoutX(40);
     rectangle.setFill(linearGradient);
     pane.getChildren().add(rectangle);
-
     /*
      * Make the buttons
      */
@@ -119,7 +146,6 @@ public class GUI
     pane.getChildren().add(openResource);
     pane.getChildren().add(generate);
     pane.getChildren().add(help);
-
     /*
      * Make the texts
      */
@@ -128,20 +154,19 @@ public class GUI
     Text openedFile = makeText(50, 150);
     Text finished = makeText(50, 385);
     Text finalPath = makeText(50, 415);
-    Text permText = makeText(45,225);
-    Text trialText = makeText(380,225);
+    Text permText = makeText(45, 225);
+    Text trialText = makeText(380, 225);
     permText.setText("Permutations per trial");
     trialText.setText("Trials");
     pane.getChildren().add(currentFile);
     pane.getChildren().add(openedFile);
     pane.getChildren().add(finished);
     pane.getChildren().add(finalPath);
-
     /*
      * Make the textfields
      */
     TextField permutationsField = makeTextField("3", 45, 230);
-    TextField trialsField = makeTextField("10000", 380, 230);
+    TextField trialsField = makeTextField("1000000", 380, 230);
 
     //create a pop up for the help button
     Pane helpPane = new Pane(); //the pane for the help window
@@ -155,7 +180,10 @@ public class GUI
     Image img = new Image("exampleschedule.PNG");
     ImageView imgView = new ImageView(img);
     helpPane.getChildren().add(imgView);
-
+    
+    /*
+     * Below are all the action handlers for the various buttons and text fields 
+     */
     openResource.setOnAction(new EventHandler<ActionEvent>()
       {
         @Override
@@ -178,7 +206,6 @@ public class GUI
           permutations = Integer.valueOf(permutationsField.getText());
         }//handle
       });
-
     trialsField.setOnAction(new EventHandler<ActionEvent>()
       {
         @Override
@@ -187,7 +214,6 @@ public class GUI
           trials = Integer.valueOf(trialsField.getText());
         }//handle
       });
-
     generate.setOnAction(new EventHandler<ActionEvent>()
       {
         @Override
@@ -199,13 +225,13 @@ public class GUI
               try
                 {
                   Schedule originalSchedule = Parser.parse(info);
-                  
+
                   UtilsSchedule.makeSchedule(originalSchedule, trials,
                                              permutations);
-                  
+
                   ScheduleWriter.write(originalSchedule, info.getParent()
                                                          + "/schedule.txt");
-                  
+
                   finished.setText("Wrote schedule:"); //tell user that it was wrote
                   finalPath.setText(info.getParent() + "/schedule.txt");
                 }//try
@@ -215,19 +241,16 @@ public class GUI
                 }//catch
               //Scheduler.generate(schools)
             }//if info !=null
-
         }//handle
       });
-
     help.setOnAction(new EventHandler<ActionEvent>()
       {
         @Override
         public void handle(ActionEvent event)
         {
           helpWindow.show();
-        }
+        }//handle
       });
-
     settings.setOnAction(new EventHandler<ActionEvent>()
       {
         @Override
@@ -236,6 +259,7 @@ public class GUI
           showingSettings = !showingSettings;
           if (showingSettings)
             {
+              //show the settings
               pane.getChildren().add(permutationsField);
               pane.getChildren().add(trialsField);
               pane.getChildren().add(permText);
@@ -243,15 +267,15 @@ public class GUI
             }//if
           else
             {
+              //don't show the settings
               pane.getChildren().remove(permutationsField);
               pane.getChildren().remove(trialsField);
               pane.getChildren().remove(permText);
               pane.getChildren().remove(trialText);
             }//else
-
-        }
+        }//handle
       });
-
+    //set the window
     primaryStage.setScene(scene);
     primaryStage.show(); //show the scene
   }//start
