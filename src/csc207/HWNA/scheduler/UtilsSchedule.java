@@ -5,8 +5,13 @@ import java.util.Random;
 
 public class UtilsSchedule
 {
-
-  public static void optimalSchedule(Schedule originalSchedule, int trials)
+ public static void makeSchedule (Schedule originalSchedule, int trials, int permutations)
+ {
+   optimalFillBackToBack(originalSchedule, 10, 180);
+   optimalSchedule(originalSchedule, trials,permutations);
+   
+ }
+  public static void optimalSchedule(Schedule originalSchedule, int trials,int permutations)
   {
 
     Schedule bestSchedule = originalSchedule.clone();
@@ -14,12 +19,12 @@ public class UtilsSchedule
     Schedule theSchedule;
     for (int trial = 0; trial < trials; trial++)
       {
-        System.out.println("Permuting");
+        //System.out.println("Permuting");
         theSchedule = bestSchedule.clone();
-        permute(theSchedule, 20);
+        permute(theSchedule, permutations);
         if (rate(theSchedule) > rate(bestSchedule))
           {
-            System.out.println("Permutation Saved!");
+            //System.out.println("Permutation Saved!");
             bestSchedule = theSchedule;
           }
       }
