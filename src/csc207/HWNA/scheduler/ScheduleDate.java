@@ -1,8 +1,5 @@
 package csc207.HWNA.scheduler;
 
-import java.util.ArrayList;
-
-
 /**
  * @author Harry Baker
  * @author William Royle
@@ -34,8 +31,7 @@ final public class ScheduleDate
    * The day of the game
    */
   int day;
-  
-  
+
   /**
    * The time ordering of the date. Non-negative integer
    */
@@ -108,7 +104,7 @@ final public class ScheduleDate
   {
     this.day = day;
   }// setDay(int day)
-  
+
   /**
    * Set the order
    * @pre
@@ -119,7 +115,6 @@ final public class ScheduleDate
     this.order = order;
   }// setDay(int day)
 
-
   /**
    * Returns a string representation of the date.
    */
@@ -127,46 +122,6 @@ final public class ScheduleDate
   {
     return (day + "/" + month);
   }// toString()
-  
-  
-  /**
-   * Find the back to back dates. By back-to-back, dates which differ by exactly 
-   * one day from other dates in the ArrayList
-   * @param dates - the dates we will search for back-to-back dates
-   * @pre
-   *    the ScheduleDates in dates must be stored by ascending order
-   * @return
-   *    Will return all the back-to-back dates as an ArrayList<ScheduleDate>
-   */
-  public static ArrayList<ScheduleDate> findBackToBack(ArrayList<ScheduleDate> dates)
-  {
-    // We initialize backToBacks as empty ArrayList
-    ArrayList<ScheduleDate> backToBacks = new ArrayList<ScheduleDate>();
-    // We loop through each date-pair
-    for (int i = 0; i < (dates.size() - 1); i++)
-      {
-        // We get the current and next date
-        ScheduleDate trackerDate1 = dates.get(i);
-        int date1 = trackerDate1.get364();
-        ScheduleDate trackerDate2 = dates.get(i + 1);
-        int date2 = trackerDate2.get364();
-        // We find the difference between the dates in days
-        int dateDifference = date2 - date1;
-        /*
-         *  If the date difference is 1, we have two regular back to back games
-         *  If the date difference is 0, it is a leap year and Feb 29 vs March 1
-         *  If the date difference is -364, we have a Dec 31 vs Jan 1 new years game
-         */
-        if (dateDifference == 1 || dateDifference == -364 || dateDifference == 0)
-          {
-            backToBacks.add(trackerDate1);
-            backToBacks.add(trackerDate2);
-          }// if
-      }// for (int i = 0; i < (dates.size() - 1); i++)
-    return backToBacks;
-  }// findBackToBack(ArrayList<ScheduleDate> dates)
-  
-  
 
   /**
    * Returns an integer representation of the date out of 364.
@@ -181,7 +136,7 @@ final public class ScheduleDate
    */
   int get364()
   {
-    int[] daysOfMonth = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+    int[] daysOfMonth = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
     int date365 = 0;
     /*
      *  We add the days in each month of our ScheduleDate until we have 
@@ -195,11 +150,7 @@ final public class ScheduleDate
     date365 += day;
     return date365;
   }// get364()
-  
-  
-  
-  
-  
+
   /**
    * Compares two date objects. Makes a judgment by comparing the 
    * order of the Dates
@@ -214,9 +165,9 @@ final public class ScheduleDate
   public int compareTo(Object o)
   {
     ScheduleDate other = (ScheduleDate) o;
-    if (order>other.order)
+    if (order > other.order)
       return 1;
-    if (order<other.order)
+    if (order < other.order)
       return -1;
     return 0;
   }// compareTo(Object o)

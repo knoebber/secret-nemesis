@@ -1,7 +1,5 @@
 package csc207.HWNA.scheduler;
 
-
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -60,7 +58,7 @@ public class Parser
     // Components of the info saved from the gile
     ArrayList<ScheduleDate> generalDates = new ArrayList<ScheduleDate>();
     ArrayList<School> theSchools = new ArrayList<School>();
-    ArrayList<PairSchools> theSchoolPairs = new ArrayList<PairSchools>();
+    ArrayList<PairSchools> thePairSchools = new ArrayList<PairSchools>();
     // We read the file line by line, generating school objects as we go
     int lineNum = 0;
     while ((line = br.readLine()) != null && !line.trim().isEmpty())
@@ -79,8 +77,8 @@ public class Parser
       }// while ((line = br.readLine()) != null && !line.trim().isEmpty())
     br.close();
     /*
-     * We loop through again, saving information for each SchoolPair as
-     * we go. Two reads are needed, as we cannot generate the SchoolPair objects
+     * We loop through again, saving information for each PairSchools as
+     * we go. Two reads are needed, as we cannot generate the PairSchools objects
      * until we have the School objects set up
      */
     lineNum = 0;
@@ -89,21 +87,21 @@ public class Parser
       {
         /*
          *  For all lines except the first, we have one school per line, so
-         *  we save each pair involving that school playing home to the schoolPairs
+         *  we save each pair involving that school playing home to the PairSchools
          */
         if (lineNum != 0)
           {
-            theSchoolPairs.addAll(getSchoolPairs(line, theSchools));
+            thePairSchools.addAll(getPairSchools(line, theSchools));
           }// if
         lineNum++;
       }// while
     cr.close();
-    return new Schedule(theSchoolPairs, generalDates, theSchools);
+    return new Schedule(thePairSchools, generalDates, theSchools);
   }// parse(File info)
 
   /**
    * Saves the information found within the specified string as an ArrayList<PairSchools>
-   * @param line - the string to generate SchoolPairs from
+   * @param line - the string to generate PairSchools from
    *        theSchools - the ArrayList of Schools which exist
    * @pre
    *    line must be formatted as follows
@@ -114,11 +112,11 @@ public class Parser
    *    -Exception
    */
   private static ArrayList<PairSchools>
-    getSchoolPairs(String line, ArrayList<School> theSchools)
+    getPairSchools(String line, ArrayList<School> theSchools)
       throws Exception
   {
     // The list that will hold the returned schools
-    ArrayList<PairSchools> theSchoolPairs = new ArrayList<PairSchools>();
+    ArrayList<PairSchools> thePairSchools = new ArrayList<PairSchools>();
     // segment[0] holds the name, segment[1] holds the school - distance pairs
     String[] segments = line.split(";");
     String schoolName = segments[0];
@@ -156,10 +154,10 @@ public class Parser
               }// if
           }// for
         // We add the found PairSchools
-        theSchoolPairs.add(new PairSchools(home, away, distance));
+        thePairSchools.add(new PairSchools(home, away, distance));
       }// for (String Distance : Distances)
-    return theSchoolPairs;
-  }// getSchoolPairs(String line, ArrayList<School> theSchools)
+    return thePairSchools;
+  }// getPairSchools(String line, ArrayList<School> theSchools)
 
   /**
    * Parses the line passed to return a School, using generalDates as the default dates
