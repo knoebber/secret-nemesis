@@ -2,7 +2,6 @@ package csc207.HWNA.scheduler;
 
 import java.util.ArrayList;
 
-
 /**
  * @author Harry Baker
  * @author William Royle
@@ -17,22 +16,22 @@ import java.util.ArrayList;
  */
 public class Day
 {
-  
+
   // +--------+------------------------------------------------------------
   // | Fields |
   // +--------+
-  
+
   /**
    * An arraylist of all the matches taking place during the day, in no
    * particular order
    */
   ArrayList<PairSchools> competing;
-  
+
   /**
    * The date of the matches
    */
   final ScheduleDate theDate;
-  
+
   // +--------------+------------------------------------------------------
   // | Constructors |
   // +--------------+
@@ -50,7 +49,7 @@ public class Day
     this.competing = competing;
     this.theDate = theDate;
   }// Day(ArrayList<PairSchools> competing, ScheduleDate theDate)
-  
+
   /**
    * Creates a new Day object, for the specified date, with no schools 
    * playing
@@ -62,7 +61,7 @@ public class Day
     this.competing = new ArrayList<PairSchools>();
     this.theDate = theDate;
   }// Day(ScheduleDate theDate)
-  
+
   // +---------+-----------------------------------------------------------
   // | Methods |
   // +---------+
@@ -104,7 +103,6 @@ public class Day
   {
     return potentialDate.equals(theDate);
   }// isDate(ScheduleDate potentialDate)
-  
 
   /**
    * Returns whether a match can be added to this Day
@@ -127,23 +125,22 @@ public class Day
         return false;
       }// if
     // We find if either the home or away school already playing on this day
-    for (PairSchools competingSchoolPair : competing)
+    for (PairSchools competingPairSchools : competing)
       {
 
-        if (theMatch.home.equals(competingSchoolPair.home)
-            || theMatch.home.equals(competingSchoolPair.away))
+        if (theMatch.home.equals(competingPairSchools.home)
+            || theMatch.home.equals(competingPairSchools.away))
           {
             return false;
           }// if
-        if (theMatch.away.equals(competingSchoolPair.home)
-            || theMatch.away.equals(competingSchoolPair.away))
+        if (theMatch.away.equals(competingPairSchools.home)
+            || theMatch.away.equals(competingPairSchools.away))
           {
             return false;
           }// if
-      }// for (PairSchools competingSchoolPair : competing)
+      }// for (PairSchools competingPairSchools : competing)
     return true;
   }// canAdd(PairSchools theMatch)
-
 
   /**
    * Adds a PairSchools match to the day, regardless of whether the 
@@ -157,11 +154,11 @@ public class Day
   public void addGame(PairSchools toAdd)
   {
     // We indicate that we cannot add the match to any schedule component again
-    toAdd.canAdd=false;
+    toAdd.canAdd = false;
     // We add the match to our Day
     competing.add(toAdd);
   }// addGame(PairSchools toAdd)
-  
+
   /**
    * Returns a match (PairSchools object) from the specified position in the day
    * @param positionToRemove - the position of the ScheduleDate object we want to 
@@ -175,9 +172,7 @@ public class Day
   {
     return competing.remove(positionToRemove);
   }// removeGame(int positionToRemove)
-  
-  
-  
+
   /**
    * Finds out whether potentialPlayer is playing a match this day
    * @param schoolPlays - the school we want to see if plays on this day
@@ -194,15 +189,15 @@ public class Day
     for (PairSchools playing : competing)
       {
         // We return true if the school is already playing in one of the matches
-        if (playing.home.equals(potentialPlayer)||playing.away.equals(potentialPlayer))
+        if (playing.home.equals(potentialPlayer)
+            || playing.away.equals(potentialPlayer))
           {
             return true;
           }// if
       }// for
     return false;
   }// schoolPlays(School potentialPlayer)
-  
-  
+
   /**
    * Returns a semi-shallow clone of this Day object (ie, new copies of each PairSchools object
    * in competing are created, but the ScheduleDate is not)
@@ -221,7 +216,7 @@ public class Day
         theNewPairSchools.add(toCopy.clone());
       }// for
     // We make a new day with our deeply cloned ArrayList of PairSchools
-    return new Day(theNewPairSchools,theDate);
+    return new Day(theNewPairSchools, theDate);
   }// clone()
 
 }// class Day

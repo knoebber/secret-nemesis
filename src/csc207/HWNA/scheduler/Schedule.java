@@ -13,13 +13,14 @@ import java.util.ArrayList;
  *
  * Represents a schedule, as in a set of teams playing each other on a set of
  * dates. A schedule can be full, in which case each school is playing each other
- * school, or unfilled, in which case no schools are yet playing. Each schedule has an 
- * ArrayList of Day objects, to hold the matches which take place, (this will be empty
- * if the schedule is unfilled). However, each schedule also has an ArrayList of SchoolPairs,
- * which are the matches which must play, and an ArrayList of the Schools. The Day objects
- * in the Schedule are not required to point to the PairSchool objects in the Schedule.
- * However, a PairSchool object where object.equals(pair) must exist for each pair inside
- * each Day object in the Schedule. The object must also have the same canAdd status.
+ * school twice, both home and away, or unfilled, in which case no schools are yet playing. 
+ * Each schedule has an ArrayList of Day objects, to hold the matches which take place,
+ * (this will be empty if the schedule is unfilled). However, each schedule also has an 
+ * ArrayList of PairSchools, which are the matches which must play, and an ArrayList of
+ * the Schools. The Day objects in the Schedule are not required to point to the PairSchool
+ * objects in the Schedule. However, a PairSchool object where object.equals(pair) must
+ * exist for each pair inside each Day object in the Schedule. The object must also have 
+ * the same canAdd status.
  * 
  * There is exactly one Day object for each ScheduleDate in allDates, so for each day in 
  * theDays, we have exactly one date in allDates such that day.isDate(date)==true

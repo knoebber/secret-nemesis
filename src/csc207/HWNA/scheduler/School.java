@@ -2,7 +2,6 @@ package csc207.HWNA.scheduler;
 
 import java.util.ArrayList;
 
-
 /**
  * @author Harry Baker
  * @author William Royle
@@ -60,7 +59,6 @@ final public class School
   // | Methods |
   // +---------+
 
-
   /**
    * Returns whether a school has the option of playing on a particular date
    * @param thisDay - the Day to check whether the school can play during
@@ -88,7 +86,7 @@ final public class School
     // Otherwise, thisDay was not found
     return false;
   }
-  
+
   /**
    * Returns the string representation of the school (name)
    */
@@ -96,7 +94,6 @@ final public class School
   {
     return name;
   }// toString
-  
 
   /**
    * Returns true if the string is the same as the school's name. We presume
