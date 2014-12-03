@@ -61,45 +61,46 @@ final public class School
   // +---------+
 
 
-
-  
-  
+  /**
+   * Returns whether a school has the option of playing on a particular date
+   * @param thisDay - the Day to check whether the school can play during
+   * @pre
+   *    gameDates.get(i).equals(optionalGameDates.get(j)) for all i, j
+   */
   public boolean canPlay(ScheduleDate thisDay)
   {
+    // We loop through the gameDates, seeing if thisDay is among them
     for (ScheduleDate potentialGameDate : gameDates)
       {
         if (thisDay.equals(potentialGameDate))
           {
             return true;
-          }
-      }
+          }// if
+      }// for
+    // We loop through the optionalGameDates, seeing if thisDay is among them
     for (ScheduleDate potentialGameDate : optionalGameDates)
       {
         if (thisDay.equals(potentialGameDate))
           {
             return true;
-          }
-      }
+          }// if
+      }// for
+    // Otherwise, thisDay was not found
     return false;
   }
   
-  
+  /**
+   * Returns the string representation of the school (name)
+   */
   public String toString()
   {
     return name;
-  }
+  }// toString
   
 
   /**
-   * Gets the ScheduleDates from the school
-   */
-  public ArrayList<ScheduleDate> getDates()
-  {
-    return gameDates;
-  }// getDates()
-
-  /**
-   * Returns true if the string is the same as the school's name
+   * Returns true if the string is the same as the school's name. We presume
+   * that no two non-identical schools will have the same name
    */
   public boolean equals(Object other)
   {
@@ -107,11 +108,11 @@ final public class School
       {
         School otherSchool = (School) other;
         return this.name.equals(otherSchool.name);
-      }
+      }// if
     if (other instanceof String)
       {
         return name.equals(other);
-      }
+      }// if
     return false;
   }// getDates()
 

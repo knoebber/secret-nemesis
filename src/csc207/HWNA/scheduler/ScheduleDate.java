@@ -126,7 +126,7 @@ final public class ScheduleDate
   public String toString()
   {
     return (day + "/" + month);
-  }
+  }// toString()
   
   
   /**
@@ -161,10 +161,10 @@ final public class ScheduleDate
           {
             backToBacks.add(trackerDate1);
             backToBacks.add(trackerDate2);
-          }
-      }
+          }// if
+      }// for (int i = 0; i < (dates.size() - 1); i++)
     return backToBacks;
-  }
+  }// findBackToBack(ArrayList<ScheduleDate> dates)
   
   
 
@@ -190,11 +190,11 @@ final public class ScheduleDate
     for (int i = 0; i < (month - 1); i++)
       {
         date365 += daysOfMonth[i];
-      }
+      }// for
     // We add the remaining days of our ScheduleDate
     date365 += day;
     return date365;
-  }
+  }// get364()
   
   
   
@@ -218,10 +218,8 @@ final public class ScheduleDate
       return 1;
     if (order<other.order)
       return -1;
-      
-
     return 0;
   }// compareTo(Object o)
 
-}
+}// class ScheduleDate
 
